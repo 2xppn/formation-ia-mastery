@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exercices Formation IA — MAGIXX PRO</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #1a1a2e;
+  color: #e8e0d0;
+  min-height: 100vh;
+  padding: 24px 16px 80px;
+}
+.logo-bar {
+  text-align: center;
+  padding: 16px 0 8px;
+  letter-spacing: 4px;
+  font-size: 13px;
+  color: #c9a84c;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+h1 { text-align: center; font-size: 26px; color: #fff; margin: 6px 0 2px; }
+.subtitle { text-align: center; color: #c9a84c; font-size: 13px; margin-bottom: 28px; letter-spacing: 2px; }
+
+/* DASHBOARD */
+.dashboard {
+  background: #16213e;
+  border: 1px solid #c9a84c44;
+  border-radius: 14px;
+  padding: 22px 28px;
+  max-width: 860px;
+  margin: 0 auto 28px;
+}
+.dashboard h2 { color: #c9a84c; font-size: 16px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+.stats-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.stat-box {
+  flex: 1; min-width: 100px;
+  background: #0f3460;
+  border-radius: 10px;
+  padding: 14px 12px;
+  text-align: center;
+}
+.stat-num { font-size: 28px; font-weight: 700; color: #c9a84c; }
+.stat-label { font-size: 12px; color: #888; margin-top: 4px; }
+.global-bar-wrap { background: #0f3460; border-radius: 50px; height: 14px; overflow: hidden; margin: 16px 0 6px; }
+.global-bar-fill { height: 100%; background: linear-gradient(90deg, #c9a84c, #f0d080); border-radius: 50px; transition: width 0.5s; }
+.global-pct { text-align: right; font-size: 13px; color: #c9a84c; font-weight: 600; }
+.congrats-dash {
+  display: none;
+  margin-top: 14px;
+  background: #c9a84c22;
+  border: 1px solid #c9a84c;
+  border-radius: 8px;
+  padding: 12px 16px;
+  text-align: center;
+  color: #c9a84c;
+  font-weight: 600;
+}
+.congrats-dash.visible { display: block; }
+
+/* NAV TABS */
+.nav-tabs {
+  display: flex;
+  gap: 8px;
+  max-width: 860px;
+  margin: 0 auto 20px;
+  flex-wrap: wrap;
+}
+.tab-btn {
+  flex: 1; min-width: 90px;
+  background: #16213e;
+  border: 1px solid #c9a84c33;
+  color: #888;
+  padding: 9px 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  text-align: center;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+.tab-btn:hover { border-color: #c9a84c88; color: #ccc; }
+.tab-btn.active { background: #c9a84c; color: #1a1a2e; font-weight: 700; border-color: #c9a84c; }
+.tab-btn .tab-phase { display: block; font-size: 10px; opacity: 0.8; margin-bottom: 2px; }
+
+/* PHASE PANEL */
+.phase-panel { display: none; max-width: 860px; margin: 0 auto; }
+.phase-panel.active { display: block; }
+.phase-title-bar {
+  display: flex; align-items: center; gap: 14px;
+  background: #16213e;
+  border: 1px solid #c9a84c44;
+  border-radius: 12px;
+  padding: 16px 22px;
+  margin-bottom: 18px;
+}
+.phase-badge {
+  background: #c9a84c;
+  color: #1a1a2e;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.phase-title-bar h2 { font-size: 18px; color: #fff; }
+.phase-title-bar .weeks { font-size: 12px; color: #888; }
+
+/* EXERCISE CARD */
+.ex-card {
+  background: #16213e;
+  border: 1px solid #c9a84c22;
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+.ex-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+}
+.ex-type {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.type-quiz { background: #0f3460; color: #64b5f6; }
+.type-pratique { background: #1a3020; color: #81c784; }
+.type-creation { background: #2d1a0e; color: #ffb74d; }
+.ex-title { font-size: 15px; font-weight: 600; color: #fff; }
+
+/* QCM */
+.qcm-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.qcm-option {
+  display: flex; align-items: center; gap: 10px;
+  background: #0f3460;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.qcm-option:hover { border-color: #c9a84c44; }
+.qcm-option.selected { border-color: #c9a84c; background: #1e2d50; }
+.qcm-option.correct { border-color: #81c784; background: #1a3020; }
+.qcm-option.wrong { border-color: #e57373; background: #2d1a1a; }
+.qcm-letter {
+  width: 26px; height: 26px;
+  background: #1a1a2e;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px; color: #c9a84c;
+  flex-shrink: 0;
+}
+.qcm-text { font-size: 14px; }
+.qcm-check-btn {
+  background: #c9a84c;
+  color: #1a1a2e;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+.qcm-check-btn:hover { opacity: 0.85; }
+.qcm-feedback {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  display: none;
+}
+.qcm-feedback.correct-fb { background: #1a3020; color: #81c784; border: 1px solid #81c78444; display: block; }
+.qcm-feedback.wrong-fb { background: #2d1a1a; color: #e57373; border: 1px solid #e5737344; display: block; }
+
+/* EXERCISE PRATIQUE */
+.ex-description {
+  font-size: 14px;
+  color: #ccc;
+  line-height: 1.7;
+  margin-bottom: 14px;
+  padding: 12px 16px;
+  background: #0f3460;
+  border-radius: 8px;
+  border-left: 3px solid #c9a84c;
+}
+.notes-label { font-size: 12px; color: #888; margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
+.notes-area {
+  width: 100%;
+  background: #0f3460;
+  border: 1px solid #c9a84c33;
+  color: #e8e0d0;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 90px;
+  transition: border-color 0.2s;
+}
+.notes-area:focus { outline: none; border-color: #c9a84c88; }
+
+/* STARS */
+.stars-section { margin-top: 14px; }
+.stars-label { font-size: 12px; color: #888; margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
+.stars { display: flex; gap: 6px; }
+.star {
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.15s, transform 0.1s;
+  line-height: 1;
+}
+.star:hover, .star.lit { color: #c9a84c; }
+.star:hover { transform: scale(1.2); }
+
+/* SAVE BTN */
+.save-btn {
+  margin-top: 14px;
+  background: transparent;
+  border: 1px solid #c9a84c88;
+  color: #c9a84c;
+  padding: 7px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.save-btn:hover { background: #c9a84c22; }
+.save-confirm {
+  display: inline-block;
+  font-size: 12px;
+  color: #81c784;
+  margin-left: 10px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.save-confirm.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="logo-bar">✦ MAGIXX PRO ✦</div>
+<h1>Exercices Formation IA</h1>
+<div class="subtitle">Débutant → Master &nbsp;·&nbsp; Quiz + Pratique + Création</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+  <h2>📊 Mon Bilan</h2>
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-num" id="stat-completed">0</div><div class="stat-label">Exercices complétés</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-correct">0</div><div class="stat-label">Quiz corrects</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-stars">0</div><div class="stat-label">Étoiles gagnées</div></div>
+    <div class="stat-box"><div class="stat-num" id="stat-avg">0★</div><div class="stat-label">Moyenne étoiles</div></div>
+  </div>
+  <div class="global-bar-wrap"><div class="global-bar-fill" id="globalBar" style="width:0%"></div></div>
+  <div class="global-pct" id="globalPct">0% complété</div>
+  <div class="congrats-dash" id="congratsDash">🏆 Formation complétée ! Vous êtes certifié IA Mastery MAGIXX PRO !</div>
+</div>
+
+<!-- TABS -->
+<div class="nav-tabs" id="navTabs"></div>
+
+<!-- PANELS -->
+<div id="panels"></div>
+
+<script>
+const PHASES_DATA = [
+  {
+    num: 1, weeks: "Sem. 1–2", title: "Comprendre l'IA",
+    exercises: [
+      {
+        id: "p1_quiz", type: "quiz", title: "Quiz — Les Fondamentaux de l'IA",
+        question: "Qu'est-ce que la formule CRITE désigne-t-elle ?",
+        options: [
+          "Un algorithme de traitement du langage naturel",
+          "Une méthode de structuration des prompts : Contexte, Rôle, Instruction, Ton, Exemple",
+          "Un type de modèle de diffusion d'images",
+          "Un protocole de sécurité pour les APIs"
+        ],
+        correct: 1,
+        explanation: "La formule CRITE est une méthode pédagogique pour rédiger des prompts efficaces en définissant 5 éléments : Contexte, Rôle, Instruction, Ton et Exemple."
+      },
+      {
+        id: "p1_pratique", type: "pratique", title: "Exercice Pratique — Rédiger des Prompts",
+        description: "Écris 3 prompts pour demander à Claude de résumer un email long. Applique la formule CRITE pour chacun. Note les différences de qualité de réponse entre un prompt simple et un prompt CRITE complet.",
+        placeholder: "Exemple de prompt 1 :\nContexte : J'ai reçu un email de 3 pages de mon manager...\nRôle : Tu es un assistant de productivité...\n\nRésultat observé : ..."
+      },
+      {
+        id: "p1_creation", type: "creation", title: "Exercice de Création — Ma Fiche IA",
+        description: "Crée avec Claude une fiche de synthèse personnelle sur l'IA. Elle doit inclure : définition, 3 outils IA utilisés, 5 cas d'usage dans ton métier, et tes premières impressions. Utilise le skill DOCX ou copie le résultat ici.",
+        placeholder: "Colle ici le contenu généré ou note les points clés de ta fiche..."
+      }
+    ]
+  },
+  {
+    num: 2, weeks: "Sem. 3–5", title: "Outils IA au quotidien",
+    exercises: [
+      {
+        id: "p2_quiz", type: "quiz", title: "Quiz — Les Skills Cowork",
+        question: "Quel skill Cowork faut-il utiliser pour créer un fichier Excel avec des formules ?",
+        options: [
+          "Le skill DOCX",
+          "Le skill PDF",
+          "Le skill XLSX",
+          "Le skill PPTX"
+        ],
+        correct: 2,
+        explanation: "Le skill XLSX est spécialisé dans la création et manipulation de fichiers Microsoft Excel (.xlsx) avec support des formules, graphiques et mises en forme."
+      },
+      {
+        id: "p2_pratique", type: "pratique", title: "Exercice Pratique — Créer un Excel avec Claude",
+        description: "Demande à Claude (via le skill XLSX dans Cowork) de créer un tableau de suivi de formation avec : Nom de la phase, Durée (semaines), Statut (À faire / En cours / Terminé), Score, Notes. Ajoute une ligne de totaux et un graphique.",
+        placeholder: "Décris ici le prompt utilisé et le résultat obtenu...\n\nLien vers le fichier créé (si disponible) :"
+      },
+      {
+        id: "p2_creation", type: "creation", title: "Exercice de Création — Mon Rapport Automatisé",
+        description: "Crée un rapport hebdomadaire complet en utilisant plusieurs skills Cowork : utilise DOCX pour le corps du rapport, XLSX pour les données, et PPTX pour une présentation exécutive. Le thème : ta semaine de formation IA.",
+        placeholder: "Décris ta démarche et note ce que tu as appris sur chaque skill..."
+      }
+    ]
+  },
+  {
+    num: 3, weeks: "Sem. 6–8", title: "GitHub & Collaboration",
+    exercises: [
+      {
+        id: "p3_quiz", type: "quiz", title: "Quiz — Vocabulaire GitHub",
+        question: "Qu'est-ce qu'une 'Pull Request' (PR) sur GitHub ?",
+        options: [
+          "Une commande pour télécharger un repository",
+          "Une demande de fusion de sa branche vers la branche principale",
+          "Un type de fichier de configuration",
+          "Un système de notification par email"
+        ],
+        correct: 1,
+        explanation: "Une Pull Request est une demande formelle de fusionner les changements d'une branche vers une autre (souvent vers main/master). Elle permet la revue de code en équipe avant d'intégrer les modifications."
+      },
+      {
+        id: "p3_pratique", type: "pratique", title: "Exercice Pratique — Mon Premier Repo GitHub",
+        description: "Crée un repository GitHub nommé 'formation-ia-mastery'. Ajoute un fichier README.md décrivant ta formation (utilise Claude pour rédiger le contenu). Fais au moins 3 commits avec des messages descriptifs. Active GitHub Pages.",
+        placeholder: "Lien vers ton repository : https://github.com/...\nLien GitHub Pages : https://...\nDifficultés rencontrées :"
+      },
+      {
+        id: "p3_creation", type: "creation", title: "Exercice de Création — Portfolio GitHub",
+        description: "Crée un portfolio GitHub Pages avec Claude. Le site doit présenter : qui tu es, tes compétences IA acquises, tes projets de formation, et tes objectifs. Utilise un design professionnel généré avec Claude.",
+        placeholder: "URL de ton portfolio : \nÉléments créés avec l'aide de Claude :\nRetour d'expérience :"
+      }
+    ]
+  },
+  {
+    num: 4, weeks: "Sem. 9–12", title: "Créer des Applications",
+    exercises: [
+      {
+        id: "p4_quiz", type: "quiz", title: "Quiz — No-Code & Déploiement",
+        question: "Quelle plateforme est la plus adaptée pour déployer gratuitement une application front-end (HTML/CSS/JS) ?",
+        options: [
+          "Microsoft Azure (payant uniquement)",
+          "Vercel ou Netlify (plans gratuits disponibles)",
+          "Oracle Cloud (complexe à configurer)",
+          "Heroku (plan gratuit supprimé)"
+        ],
+        correct: 1,
+        explanation: "Vercel et Netlify offrent des plans gratuits généreux pour déployer des sites statiques et applications front-end. Ils se connectent directement à GitHub pour le déploiement automatique à chaque push."
+      },
+      {
+        id: "p4_pratique", type: "pratique", title: "Exercice Pratique — Landing Page HTML avec Claude",
+        description: "Demande à Claude de créer une landing page HTML complète pour promouvoir ta formation IA. Elle doit inclure : hero section, liste des 7 phases, témoignage fictif, et formulaire de contact. Déploie-la sur Vercel ou Netlify.",
+        placeholder: "Prompt utilisé pour générer la page :\n\nURL déployée : https://...\nAspects améliorés après génération initiale :"
+      },
+      {
+        id: "p4_creation", type: "creation", title: "Exercice de Création — Mon Application Web",
+        description: "Crée une petite application web fonctionnelle avec Claude : un outil de génération de prompts CRITE. L'utilisateur remplit 5 champs (C, R, I, T, E) et le prompt complet se génère automatiquement. Déploie l'application.",
+        placeholder: "Description de l'application créée :\n\nURL de l'application : \nCode généré par Claude (extrait) :"
+      }
+    ]
+  },
+  {
+    num: 5, weeks: "Sem. 13–15", title: "Agents IA & Automatisations",
+    exercises: [
+      {
+        id: "p5_quiz", type: "quiz", title: "Quiz — Agents & Automatisations",
+        question: "Que signifie MCP dans le contexte de Claude et Cowork ?",
+        options: [
+          "Machine Control Protocol — un protocole réseau",
+          "Model Context Protocol — un standard pour connecter des outils à des LLMs",
+          "Multi-Cloud Platform — une infrastructure cloud",
+          "Message Compression Protocol — un format de compression"
+        ],
+        correct: 1,
+        explanation: "MCP (Model Context Protocol) est un protocole développé par Anthropic pour permettre aux LLMs de se connecter à des outils externes, des bases de données, et des services via des serveurs MCP standardisés."
+      },
+      {
+        id: "p5_pratique", type: "pratique", title: "Exercice Pratique — Automatisation Make",
+        description: "Configure une automatisation Make (make.com) avec au moins 3 étapes : 1) Déclencheur (ex: formulaire, email, planning), 2) Traitement par Claude via API ou Cowork, 3) Action finale (ex: email de résumé, fichier créé). Documente le workflow.",
+        placeholder: "Décris ton workflow Make :\n- Déclencheur : \n- Traitement : \n- Action finale : \n\nCapture du scénario Make :"
+      },
+      {
+        id: "p5_creation", type: "creation", title: "Exercice de Création — Mon Skill Personnalisé",
+        description: "Crée ton propre Skill dans Cowork. Idées : un skill pour analyser des factures, générer des rapports dans ton domaine, ou créer du contenu selon une charte précise. Documente le SKILL.md et teste-le avec 3 cas d'usage différents.",
+        placeholder: "Nom du Skill créé : \nDescription du SKILL.md :\n\nCas d'usage testés :\n1. \n2. \n3. "
+      }
+    ]
+  },
+  {
+    num: 6, weeks: "Sem. 16–18", title: "IA Appliquée aux Métiers",
+    exercises: [
+      {
+        id: "p6_quiz", type: "quiz", title: "Quiz — IA Métiers",
+        question: "Dans quel cas l'IA est-elle la PLUS efficace pour l'analyse de données financières ?",
+        options: [
+          "Remplacer complètement un expert-comptable certifié",
+          "Identifier des patterns et anomalies dans de grands volumes de données",
+          "Signer légalement des documents financiers",
+          "Accéder directement aux systèmes bancaires sans autorisation"
+        ],
+        correct: 1,
+        explanation: "L'IA excelle dans l'identification de patterns, anomalies et tendances dans de grands jeux de données. Elle augmente les capacités humaines mais ne remplace pas le jugement expert, la responsabilité légale ou l'accès autorisé aux systèmes."
+      },
+      {
+        id: "p6_pratique", type: "pratique", title: "Exercice Pratique — Analyse de Données",
+        description: "Prépare un jeu de données (tableau CSV ou Excel avec au moins 50 lignes : ventes, RH, finances, ou autre selon ton domaine). Demande à Claude d'analyser les données : tendances, anomalies, recommandations. Compare l'analyse IA avec ta propre lecture.",
+        placeholder: "Type de données analysées : \nPrompt d'analyse utilisé :\n\nInsights trouvés par l'IA :\nInsights que tu aurais manqués sans l'IA :"
+      },
+      {
+        id: "p6_creation", type: "creation", title: "Exercice de Création — Dossier de Transformation IA",
+        description: "Crée un dossier complet de transformation IA pour ton secteur ou entreprise. Utilise Claude pour rédiger : analyse des opportunités, recommandations d'outils, plan d'implémentation en 3 phases, estimation du ROI. Format : DOCX professionnel.",
+        placeholder: "Secteur analysé : \nOpportunités IA identifiées :\n\nPlan d'implémentation résumé :\nROI estimé :"
+      }
+    ]
+  },
+  {
+    num: 7, weeks: "Sem. 19–20", title: "Niveau Master & Capstone",
+    exercises: [
+      {
+        id: "p7_quiz", type: "quiz", title: "Quiz — Architecture & Éthique IA",
+        question: "Qu'est-ce qu'un 'biais algorithmique' dans un système IA ?",
+        options: [
+          "Une erreur de code dans l'algorithme de training",
+          "Des préjugés systématiques dans les données ou le modèle produisant des résultats inéquitables",
+          "Un déséquilibre de charge dans l'infrastructure serveur",
+          "Un problème de vitesse de traitement du modèle"
+        ],
+        correct: 1,
+        explanation: "Le biais algorithmique désigne des préjugés systématiques envers certains groupes, issus de données d'entraînement non représentatives ou de choix de conception. Il peut produire des résultats discriminatoires (ex: en RH, crédit, justice)."
+      },
+      {
+        id: "p7_pratique", type: "pratique", title: "Exercice Pratique — Intégration API Claude",
+        description: "Crée une petite application qui appelle l'API Claude (Anthropic) directement. L'application doit : accepter un texte en entrée, l'envoyer à Claude avec un system prompt personnalisé, et afficher la réponse formatée. Déploie l'application.",
+        placeholder: "Langage utilisé (Python / JS / autre) : \nSystem prompt choisi :\n\nURL de l'application : \nCode principal (extrait) :"
+      },
+      {
+        id: "p7_creation", type: "creation", title: "🏆 PROJET CAPSTONE — Mon Produit IA",
+        description: "C'est le grand projet final ! Construis et déploie un produit IA complet et original. Il doit utiliser au minimum : l'API ou Cowork Claude, une interface utilisateur web, et au moins une automatisation. Documente tout : idée, architecture, développement, déploiement, et présentation pitch (5 minutes). Ce projet est ta certification !",
+        placeholder: "Nom du produit : \nProblème résolu : \n\nArchitecture (outils utilisés) :\n\nURL en production : \n\nRésumé du pitch (3 phrases) :\n\nFierté principale du projet :"
+      }
+    ]
+  }
+];
+
+const STORAGE_KEY = 'magixx_exercises_v1';
+function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } }
+function saveState(s) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch {} }
+
+let state = loadState();
+
+function getTypeLabel(type) {
+  if (type === 'quiz') return '<span class="ex-type type-quiz">📝 Quiz QCM</span>';
+  if (type === 'pratique') return '<span class="ex-type type-pratique">🔧 Pratique</span>';
+  return '<span class="ex-type type-creation">✨ Création</span>';
+}
+
+function buildStars(exId) {
+  const saved = state[exId]?.stars || 0;
+  return `<div class="stars-section">
+    <div class="stars-label">Évaluation personnelle</div>
+    <div class="stars" data-exid="${exId}">
+      ${[1,2,3,4,5].map(n => `<span class="star ${saved >= n ? 'lit' : ''}" data-star="${n}">★</span>`).join('')}
+    </div>
+  </div>`;
+}
+
+function buildQuiz(ex) {
+  const s = state[ex.id] || {};
+  return `<div class="ex-card" id="card-${ex.id}">
+    <div class="ex-header">${getTypeLabel(ex.type)}<span class="ex-title">${ex.title}</span></div>
+    <p style="font-size:14px;color:#ccc;margin-bottom:14px;line-height:1.6">${ex.question}</p>
+    <div class="qcm-options" id="opts-${ex.id}">
+      ${ex.options.map((opt, i) => {
+        let cls = '';
+        if (s.answered) { if (i === ex.correct) cls = 'correct'; else if (i === s.selected) cls = 'wrong'; }
+        else if (i === s.selected) cls = 'selected';
+        return `<div class="qcm-option ${cls}" data-exid="${ex.id}" data-opt="${i}" data-correct="${ex.correct}">
+          <div class="qcm-letter">${String.fromCharCode(65+i)}</div>
+          <div class="qcm-text">${opt}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    ${!s.answered ? `<button class="qcm-check-btn" data-exid="${ex.id}">Valider ma réponse</button>` : ''}
+    <div class="qcm-feedback ${s.answered ? (s.selected === ex.correct ? 'correct-fb' : 'wrong-fb') : ''}" id="fb-${ex.id}">
+      ${s.answered ? (s.selected === ex.correct ? '✅ Correct ! ' : '❌ Incorrect. ') + ex.explanation : ''}
+    </div>
+    ${buildStars(ex.id)}
+  </div>`;
+}
+
+function buildPratique(ex) {
+  const s = state[ex.id] || {};
+  return `<div class="ex-card" id="card-${ex.id}">
+    <div class="ex-header">${getTypeLabel(ex.type)}<span class="ex-title">${ex.title}</span></div>
+    <div class="ex-description">${ex.description}</div>
+    <div class="notes-label">Mes notes & résultats</div>
+    <textarea class="notes-area" id="notes-${ex.id}" placeholder="${ex.placeholder}" rows="5">${s.notes || ''}</textarea>
+    ${buildStars(ex.id)}
+    <div style="margin-top:12px">
+      <button class="save-btn" data-exid="${ex.id}" data-type="notes">Sauvegarder</button>
+      <span class="save-confirm" id="sc-${ex.id}">✓ Sauvegardé</span>
+    </div>
+  </div>`;
+}
+
+function buildAll() {
+  const nav = document.getElementById('navTabs');
+  const panels = document.getElementById('panels');
+  PHASES_DATA.forEach((phase, idx) => {
+    // Tab
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
+    btn.dataset.phase = phase.num;
+    btn.innerHTML = `<span class="tab-phase">Phase ${phase.num}</span>${phase.title.substring(0, 12)}${phase.title.length > 12 ? '…' : ''}`;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.phase-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(`panel-${phase.num}`).classList.add('active');
+    });
+    nav.appendChild(btn);
+
+    // Panel
+    const panel = document.createElement('div');
+    panel.className = 'phase-panel' + (idx === 0 ? ' active' : '');
+    panel.id = `panel-${phase.num}`;
+    panel.innerHTML = `
+      <div class="phase-title-bar">
+        <div class="phase-badge">PHASE ${phase.num}</div>
+        <div><h2>${phase.title}</h2><div class="weeks">${phase.weeks}</div></div>
+      </div>
+      ${phase.exercises.map(ex => ex.type === 'quiz' ? buildQuiz(ex) : buildPratique(ex)).join('')}
+    `;
+    panels.appendChild(panel);
+  });
+
+  // Quiz events
+  document.querySelectorAll('.qcm-option').forEach(opt => {
+    opt.addEventListener('click', function() {
+      if (state[this.dataset.exid]?.answered) return;
+      if (!state[this.dataset.exid]) state[this.dataset.exid] = {};
+      state[this.dataset.exid].selected = parseInt(this.dataset.opt);
+      document.querySelectorAll(`[data-exid="${this.dataset.exid}"].qcm-option`).forEach(o => o.classList.remove('selected'));
+      this.classList.add('selected');
+    });
+  });
+
+  document.querySelectorAll('.qcm-check-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const exId = this.dataset.exid;
+      const s = state[exId];
+      if (s?.selected === undefined) return;
+      const phase = PHASES_DATA.find(p => p.exercises.find(e => e.id === exId));
+      const ex = phase?.exercises.find(e => e.id === exId);
+      if (!ex) return;
+      s.answered = true;
+      saveState(state);
+      // Re-style options
+      document.querySelectorAll(`[data-exid="${exId}"].qcm-option`).forEach((o, i) => {
+        o.classList.remove('selected');
+        if (i === ex.correct) o.classList.add('correct');
+        else if (i === s.selected) o.classList.add('wrong');
+      });
+      const fb = document.getElementById(`fb-${exId}`);
+      fb.className = `qcm-feedback ${s.selected === ex.correct ? 'correct-fb' : 'wrong-fb'}`;
+      fb.textContent = (s.selected === ex.correct ? '✅ Correct ! ' : '❌ Incorrect. ') + ex.explanation;
+      this.remove();
+      if (!s.stars) { state[exId].stars = s.selected === ex.correct ? 5 : 2; saveState(state); }
+      updateDashboard();
+    });
+  });
+
+  // Notes save
+  document.querySelectorAll('.save-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const exId = this.dataset.exid;
+      if (!state[exId]) state[exId] = {};
+      state[exId].notes = document.getElementById(`notes-${exId}`).value;
+      state[exId].saved = true;
+      saveState(state);
+      const sc = document.getElementById(`sc-${exId}`);
+      sc.classList.add('show');
+      setTimeout(() => sc.classList.remove('show'), 2000);
+      updateDashboard();
+    });
+  });
+
+  // Stars
+  document.querySelectorAll('.stars').forEach(starsEl => {
+    starsEl.querySelectorAll('.star').forEach(star => {
+      star.addEventListener('click', function() {
+        const exId = starsEl.dataset.exid;
+        const val = parseInt(this.dataset.star);
+        if (!state[exId]) state[exId] = {};
+        state[exId].stars = val;
+        saveState(state);
+        starsEl.querySelectorAll('.star').forEach(s => s.classList.toggle('lit', parseInt(s.dataset.star) <= val));
+        updateDashboard();
+      });
+    });
+  });
+
+  updateDashboard();
+}
+
+function updateDashboard() {
+  let total = 0, completed = 0, correct = 0, totalStars = 0, starCount = 0;
+  PHASES_DATA.forEach(phase => {
+    phase.exercises.forEach(ex => {
+      total++;
+      const s = state[ex.id];
+      if (s) {
+        if (ex.type === 'quiz' && s.answered) { completed++; if (s.selected === ex.correct) correct++; }
+        else if (ex.type !== 'quiz' && s.saved) completed++;
+        if (s.stars) { totalStars += s.stars; starCount++; }
+      }
+    });
+  });
+  document.getElementById('stat-completed').textContent = completed;
+  document.getElementById('stat-correct').textContent = correct;
+  document.getElementById('stat-stars').textContent = totalStars;
+  document.getElementById('stat-avg').textContent = starCount ? (totalStars / starCount).toFixed(1) + '★' : '0★';
+  const pct = total ? Math.round(completed / total * 100) : 0;
+  document.getElementById('globalBar').style.width = pct + '%';
+  document.getElementById('globalPct').textContent = pct + '% complété';
+  document.getElementById('congratsDash').classList.toggle('visible', completed === total && total > 0);
+}
+
+buildAll();
+</script>
+</body>
+</html>
