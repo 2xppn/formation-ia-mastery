@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MAGIXX PRO — Formation IA Mastery</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0b09;--card:#1a1612;--card2:#221e18;--gold:#c9a84c;--gold2:#e8c96a;--border:#2e2a1f;--text:#f0e8d0;--muted:#8a8070;--green:#4caf7d;--red:#e05555;--blue:#3a9bd5}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;padding-bottom:72px}
+a{color:var(--gold);text-decoration:none}
+/* NAV */
+.top-nav{background:var(--card);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:200}
+.logo{font-size:17px;font-weight:700;color:var(--gold);letter-spacing:1px}.logo span{color:var(--text)}
+/* HERO */
+.hero{padding:32px 20px 24px;text-align:center;background:var(--card);border-bottom:1px solid var(--border)}
+.hero h1{font-size:26px;font-weight:700;color:var(--gold);margin-bottom:6px}.hero h1 span{color:var(--text)}
+.hero p{font-size:13px;color:var(--muted);margin-bottom:20px}
+.stats{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+.stat .n{font-size:24px;font-weight:700;color:var(--gold)}.stat .l{font-size:11px;color:var(--muted)}
+/* PROGRESS */
+.prog-bar-wrap{padding:12px 16px;background:var(--card);border-bottom:1px solid var(--border)}
+.prog-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px}
+.prog-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--gold);border-radius:3px;transition:width .6s;width:0%}
+/* SCREENS */
+.screen{display:none}.screen.active{display:block}
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;width:100%;background:var(--card);border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);z-index:200}
+.bnv{display:flex;flex-direction:column;align-items:center;padding:7px 0 9px;gap:2px;border:none;background:none;cursor:pointer;width:100%}
+.bnv i{font-size:22px;color:var(--muted)}.bnv span{font-size:10px;color:var(--muted)}
+.bnv.active i,.bnv.active span{color:var(--gold)}
+/* PHASE CARDS */
+.phases{padding:16px;max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.phase-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.phase-card.open{border-color:var(--gold)}
+.ph-hd{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none}
+.ph-badge{width:38px;height:38px;border-radius:10px;background:var(--gold);color:#0d0b09;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ph-info{flex:1}.ph-title{font-size:14px;font-weight:600;color:var(--text)}.ph-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.ph-right{display:flex;align-items:center;gap:8px}
+.ph-pct{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--card2);color:var(--muted)}
+.ph-pct.done{background:rgba(76,175,125,.15);color:var(--green)}
+.ph-arrow{color:var(--muted);font-size:18px;transition:transform .2s;flex-shrink:0}
+.phase-card.open .ph-arrow{transform:rotate(90deg)}
+.ph-body{display:none;border-top:1px solid var(--border)}
+.phase-card.open .ph-body{display:block}
+.ph-obj{margin:12px 16px 0;padding:10px 12px;background:var(--card2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;font-size:12px;color:var(--gold);font-weight:500}
+.ph-chapters{padding:10px 16px 14px;display:flex;flex-direction:column;gap:6px}
+.chapter{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card2);border-radius:10px;cursor:pointer;transition:border .2s;border:1px solid transparent}
+.chapter:hover{border-color:var(--border)}
+.ch-icon{width:32px;height:32px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ch-icon i{font-size:15px;color:var(--muted)}
+.chapter.done .ch-icon{background:rgba(76,175,125,.15)}.chapter.done .ch-icon i{color:var(--green)}
+.ch-text{flex:1}.ch-title{font-size:12px;font-weight:600;color:var(--text)}.ch-desc{font-size:11px;color:var(--muted);margin-top:1px;line-height:1.4}
+.ch-btn{font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid var(--gold);color:var(--gold);background:none;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.chapter.done .ch-btn{border-color:var(--green);color:var(--green)}
+/* MODAL chapitre */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);z-index:300;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:20px 20px 0 0;border-top:1px solid var(--border);width:100%;max-width:780px;max-height:90vh;overflow-y:auto;padding:20px 20px 32px}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+.modal-section{margin-bottom:16px}
+.modal-section-title{font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.modal-section-title i{font-size:14px}
+.content-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.content-list li{font-size:12px;color:var(--muted);display:flex;gap:8px;line-height:1.5}
+.content-list li::before{content:"→";color:var(--gold);flex-shrink:0}
+.quiz-block{background:var(--card2);border-radius:10px;padding:14px}
+.quiz-q{font-size:13px;color:var(--text);margin-bottom:10px;font-weight:500}
+.quiz-opts{display:flex;flex-direction:column;gap:6px}
+.quiz-opt{padding:9px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:12px;color:var(--muted);text-align:left;transition:all .2s}
+.quiz-opt:hover:not(:disabled){border-color:var(--gold);color:var(--text)}
+.quiz-opt.correct{border-color:var(--green);background:rgba(76,175,125,.1);color:var(--green)}
+.quiz-opt.wrong{border-color:var(--red);background:rgba(224,85,85,.08);color:var(--red)}
+.quiz-fb{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:12px;display:none}
+.quiz-fb.show{display:block}.quiz-fb.ok{background:rgba(76,175,125,.1);color:var(--green)}.quiz-fb.nok{background:rgba(224,85,85,.1);color:var(--red)}
+.pratique-box{background:var(--card2);border-left:3px solid var(--gold);padding:12px;border-radius:0 8px 8px 0;font-size:11px;color:var(--gold);white-space:pre-wrap;line-height:1.7;margin-top:8px}
+.stars-row{display:flex;gap:8px;align-items:center;margin:12px 0 8px}
+.star{font-size:24px;cursor:pointer;color:var(--border);transition:color .2s;line-height:1}
+.star.lit{color:var(--gold)}
+.notes-area{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:12px;resize:vertical;min-height:70px;outline:none;margin-top:8px}
+.notes-area:focus{border-color:var(--gold)}
+.btn-gold{width:100%;margin-top:14px;padding:13px;background:var(--gold);color:#0d0b09;font-size:14px;font-weight:700;border:none;border-radius:12px;cursor:pointer}
+.btn-close{background:var(--card2);color:var(--muted);margin-top:8px;width:100%;padding:11px;border:1px solid var(--border);border-radius:10px;font-size:13px;cursor:pointer}
+/* CHECKLIST SCREEN */
+.cl-wrap{padding:16px;max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.cl-phase{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.cl-phase.open{border-color:var(--gold)}
+.cl-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer}
+.cl-hd-left{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--text)}
+.cl-hd-left i{color:var(--gold);font-size:16px}
+.cl-cnt{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--card2);color:var(--muted)}
+.cl-cnt.done{background:rgba(76,175,125,.15);color:var(--green)}
+.cl-items{display:none;padding:0 16px 12px;border-top:1px solid var(--border)}
+.cl-phase.open .cl-items{display:block}
+.cl-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.cl-item:last-child{border-bottom:none}
+.cl-check{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.cl-item.ck .cl-check{background:var(--green);border-color:var(--green)}
+.cl-item.ck .cl-check i{color:#fff;font-size:12px}
+.cl-item span{font-size:12px;color:var(--muted);transition:all .2s;line-height:1.4}
+.cl-item.ck span{text-decoration:line-through;color:var(--border)}
+/* BILAN SCREEN */
+.bilan{padding:20px;max-width:500px;margin:0 auto;text-align:center}
+.bilan-score{font-size:56px;font-weight:700;color:var(--gold);line-height:1}
+.bilan-lbl{font-size:13px;color:var(--muted);margin:8px 0 24px}
+.bilan-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;margin-bottom:20px}
+.b-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+.b-card-l{font-size:11px;color:var(--muted);margin-bottom:4px}
+.b-card-v{font-size:20px;font-weight:700;color:var(--gold)}
+.bilan-phases{text-align:left}
+.bp-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card);border-radius:10px;margin-bottom:8px}
+.bp-num{width:28px;height:28px;border-radius:7px;background:var(--gold);color:#0d0b09;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bp-name{flex:1;font-size:12px;color:var(--text)}
+.bp-bar-wrap{width:80px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.bp-bar{height:100%;background:var(--gold);border-radius:3px;transition:width .5s}
+.bp-pct{font-size:11px;color:var(--muted);width:28px;text-align:right}
+</style>
+</head>
+<body>
+
+<div class="top-nav">
+  <div class="logo">MAGIXX <span>FORMATION</span></div>
+  <div style="font-size:11px;color:var(--muted)" id="topPct">0% complété</div>
+</div>
+
+<div class="hero">
+  <h1>Formation IA <span>Mastery</span></h1>
+  <p>De débutant à expert · 7 phases · 20 semaines</p>
+  <div class="stats">
+    <div class="stat"><div class="n">7</div><div class="l">Phases</div></div>
+    <div class="stat"><div class="n">20</div><div class="l">Semaines</div></div>
+    <div class="stat"><div class="n">49</div><div class="l">Chapitres</div></div>
+    <div class="stat"><div class="n" id="heroScore">0%</div><div class="l">Avancement</div></div>
+  </div>
+</div>
+
+<div class="prog-bar-wrap">
+  <div class="prog-meta"><span>Progression globale</span><span id="progLabel">0 / 49 chapitres</span></div>
+  <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+</div>
+
+<!-- SCREENS -->
+<div class="screen active" id="scr-programme">
+  <div class="phases" id="phasesContainer"></div>
+</div>
+
+<div class="screen" id="scr-checklist">
+  <div class="cl-wrap" id="clContainer"></div>
+</div>
+
+<div class="screen" id="scr-bilan">
+  <div class="bilan">
+    <div class="bilan-score" id="bilanPct">0%</div>
+    <div class="bilan-lbl" id="bilanMsg">Commence la formation pour voir ton avancement</div>
+    <div class="bilan-grid">
+      <div class="b-card"><div class="b-card-l">Chapitres complétés</div><div class="b-card-v" id="bChap">0/49</div></div>
+      <div class="b-card"><div class="b-card-l">Quiz réussis</div><div class="b-card-v" id="bQuiz">0/7</div></div>
+      <div class="b-card"><div class="b-card-l">Phase en cours</div><div class="b-card-v" id="bPhase">Phase 1</div></div>
+      <div class="b-card"><div class="b-card-l">Note moyenne</div><div class="b-card-v" id="bNote">—</div></div>
+    </div>
+    <div class="bilan-phases" id="bilanPhases"></div>
+  </div>
+</div>
+
+<!-- MODAL CHAPITRE -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="bnv active" onclick="switchTab('programme')"><i class="ti ti-book"></i><span>Programme</span></button>
+  <button class="bnv" onclick="switchTab('checklist')"><i class="ti ti-checkbox"></i><span>Checklist</span></button>
+  <button class="bnv" onclick="switchTab('bilan')"><i class="ti ti-chart-bar"></i><span>Tableau de bord</span></button>
+  <button class="bnv" onclick="window.open('https://claude.ai','_blank')"><i class="ti ti-message-circle"></i><span>Pratiquer</span></button>
+</nav>
+
+<script>
+var DATA=[
+  {n:"01",title:"Comprendre l'IA",weeks:"Sem. 1–2",obj:"Utiliser l'IA chaque jour pour 3 tâches différentes",
+   chapters:[
+    {t:"Qu'est-ce que l'IA ?",d:"Histoire, types d'IA, différences GPT vs Claude vs Gemini",
+     content:"L'intelligence artificielle est un programme capable d'apprendre et de raisonner. En 2026, les IA génératives (Claude, ChatGPT, Gemini) peuvent comprendre le langage naturel, générer du texte, du code, des images et des fichiers.",
+     learn:["Comprendre ce qu'est un LLM (Large Language Model)","Différences entre Claude, ChatGPT, Gemini, Copilot","Forces et limites de chaque IA","Cas d'usage : texte, code, images, analyse"],
+     quiz:{q:"Quelle est la différence principale entre Claude et ChatGPT ?",opts:["Claude est gratuit, ChatGPT payant","Ce sont des LLMs différents d'entreprises différentes (Anthropic vs OpenAI)","Claude ne peut pas écrire du code","ChatGPT est plus récent"],correct:1,exp:"Claude est développé par Anthropic, ChatGPT par OpenAI. Les deux sont des LLMs mais avec des entraînements et philosophies différents."},
+     prompt:"Demande à Claude : 'Explique-moi en 5 points ce qui te différencie de ChatGPT et Gemini. Sois concis et pratique.'"},
+    {t:"La formule CRITE",d:"Contexte, Rôle, Instruction, Ton, Exemple",
+     content:"CRITE est la formule pour écrire des prompts qui obtiennent des résultats professionnels. Chaque lettre correspond à un élément qui améliore la qualité de la réponse de l'IA.",
+     learn:["C = Contexte : donne le contexte de ta demande","R = Rôle : dis à l'IA qui elle doit être","I = Instruction : ce que tu veux précisément","T = Ton : le style (formel, casual, expert...)","E = Exemple : montre un exemple si possible"],
+     quiz:{q:"Dans CRITE, que signifie le 'T' ?",opts:["Texte","Temps","Ton","Taille"],correct:2,exp:"T = Ton. Le ton définit le style de la réponse : professionnel, décontracté, expert, pédagogique..."},
+     prompt:"Contexte : Je dois analyser un match de basket pour mes paris\nRôle : Tu es un analyste sportif expert\nInstruction : Analyse ce match selon les stats offensives/défensives\nTon : Professionnel et concis\nExemple : Comme dans notre système MAGIXX PRO"},
+    {t:"Sécurité et éthique",d:"Confidentialité, limites, bonnes pratiques",
+     content:"L'IA a des limites importantes à connaître. Elle peut halluciner (inventer des faits), ses données ont une date de coupure, et il ne faut jamais lui confier d'informations personnelles sensibles.",
+     learn:["Ne jamais partager mots de passe ou données bancaires","L'IA peut se tromper — toujours vérifier les faits importants","Comprendre les limites de connaissance (date de coupure)","Droits d'auteur et propriété intellectuelle","Utilisation éthique de l'IA au travail"],
+     quiz:{q:"Que faire si l'IA te donne une information qui semble fausse ?",opts:["La croire aveuglément","La vérifier via une source fiable","Changer d'IA","Recommencer depuis le début"],correct:1,exp:"L'IA peut halluciner. Toujours vérifier les informations importantes avec des sources fiables, surtout pour des décisions importantes."},
+     prompt:"Demande à Claude : 'Quelles sont tes limites principales et quand ne faut-il pas te faire confiance sans vérification ?'"},
+    {t:"Premiers prompts quotidiens",d:"5 exercices pratiques du quotidien",
+     content:"La meilleure façon d'apprendre l'IA c'est de la pratiquer chaque jour. Voici 5 exercices pour intégrer l'IA dans ta routine quotidienne dès aujourd'hui.",
+     learn:["Résumer un email long en 3 points","Corriger et améliorer un texte","Créer un plan pour une réunion","Traduire et adapter un message","Générer des idées pour un projet"],
+     quiz:{q:"Quelle est la meilleure façon de progresser avec l'IA ?",opts:["Lire des théories pendant des semaines","Pratiquer chaque jour avec des cas réels","Regarder des vidéos YouTube","Apprendre à coder en Python d'abord"],correct:1,exp:"La pratique quotidienne est irremplaçable. 15 minutes par jour avec l'IA vaut mieux que 4 heures une fois par semaine."},
+     prompt:"Chaque matin cette semaine, écris ce prompt à Claude :\n'Bonjour ! Voici ma to-do list du jour : [ta liste]. Aide-moi à prioriser, estime le temps pour chaque tâche, et suggère si quelque chose peut être automatisé avec l'IA.'"},
+    {t:"Configurer Cowork",d:"Installation, plugins, premiers pas",
+     content:"Cowork est l'interface Claude sur desktop qui te permet de connecter des dossiers, utiliser des plugins et créer des automatisations. C'est l'outil principal de ta formation.",
+     learn:["Installer Cowork sur ton PC","Connecter ton dossier OneDrive","Activer les plugins utiles (PPTX, XLSX, PDF)","Comprendre le système de Sessions","Créer ton premier fichier avec Cowork"],
+     quiz:{q:"À quoi sert le dossier connecté dans Cowork ?",opts:["À sauvegarder automatiquement les résultats","À stocker des photos","À améliorer la connexion internet","À configurer les plugins"],correct:0,exp:"En connectant un dossier (comme OneDrive), Cowork peut lire et écrire des fichiers directement dans ton système de fichiers."},
+     prompt:"Dans Cowork, dis à Claude : 'Crée un fichier texte dans mon dossier Project TRAINING IA qui liste mes 5 objectifs pour cette formation IA.'"},
+    {t:"Voix et style de communication",d:"Adapter l'IA à ta façon de travailler",
+     content:"L'IA peut s'adapter à ton style. Tu peux lui demander d'être plus court, plus détaillé, d'utiliser des emojis ou non, de parler en français, de structurer différemment...",
+     learn:["Définir ton style de communication préféré","Demander des réponses plus courtes ou plus longues","Utiliser des templates réutilisables","Sauvegarder tes meilleurs prompts","Personnaliser l'IA pour tes besoins spécifiques"],
+     quiz:{q:"Comment obtenir des réponses plus courtes de l'IA ?",opts:["Écrire des prompts plus courts","Ajouter 'Réponse concise, max 3 points' dans ton prompt","Changer de modèle IA","Redémarrer la conversation"],correct:1,exp:"Tu peux toujours spécifier la longueur et le format voulu directement dans ton prompt. L'IA s'adaptera."},
+     prompt:"Dis à Claude : 'Désormais dans cette conversation, réponds toujours de manière ultra-concise : max 3 bullet points, pas d'introduction ni de conclusion. Confirme en disant uniquement OK.'"},
+    {t:"Évaluation Phase 1",d:"Bilan et passage à la phase suivante",
+     content:"Tu as terminé la Phase 1 ! Voici un bilan de ce que tu dois maîtriser avant de passer à la Phase 2.",
+     learn:["Je peux expliquer la différence entre les IA principales","Je maîtrise la formule CRITE","J'utilise l'IA au moins une fois par jour","Je connais les risques et limites de l'IA","Je sais configurer Cowork et connecter un dossier"],
+     quiz:{q:"Tu es prêt(e) pour la Phase 2 si :",opts:["Tu as mémorisé tous les concepts théoriques","Tu as pratiqué CRITE sur au moins 10 prompts réels","Tu as regardé des vidéos sur l'IA","Tu as un score parfait au quiz"],correct:1,exp:"La pratique est la clé. 10 prompts réels avec CRITE te donnent une base solide pour continuer."},
+     prompt:"Écris un prompt CRITE complet pour une tâche de ton quotidien professionnel, puis demande à Claude de l'évaluer et l'améliorer."}
+   ]},
+  {n:"02",title:"Outils IA au quotidien",weeks:"Sem. 3–5",obj:"Créer un flux de travail complet automatisé avec l'IA",
+   chapters:[
+    {t:"Skills Cowork : PPTX & DOCX",d:"Créer présentations et documents pros",
+     content:"Les Skills Cowork sont des modules spécialisés qui permettent à Claude de créer des fichiers professionnels. Le skill PPTX génère des PowerPoints complets, DOCX crée des documents Word formatés.",
+     learn:["Activer le skill PPTX dans Cowork","Créer une présentation complète avec Claude","Activer le skill DOCX","Générer un rapport Word professionnel","Personnaliser le design et le contenu"],
+     quiz:{q:"Pour créer un fichier Excel avec Claude dans Cowork, quel skill utilises-tu ?",opts:["PPTX skill","DOCX skill","XLSX skill","PDF skill"],correct:2,exp:"Le skill XLSX est dédié à la création et modification de fichiers Excel avec formules, mise en forme et graphiques."},
+     prompt:"Dans Cowork, écris : 'Crée une présentation PowerPoint de 5 slides sur les meilleures pratiques de paris sportifs. Design sombre avec accents dorés. Inclus : titre, méthode d'analyse, gestion bankroll, exemples, conclusion.'"},
+    {t:"Skills Cowork : XLSX & PDF",d:"Tableurs et documents PDF",
+     content:"Le skill XLSX permet de créer des tableaux de bord Excel dynamiques avec formules. Le skill PDF permet d'extraire, créer et modifier des fichiers PDF.",
+     learn:["Créer un tableau de suivi Excel avec formules","Ajouter des graphiques automatiquement","Extraire du texte d'un PDF","Créer un PDF formaté","Remplir des formulaires PDF"],
+     quiz:{q:"Que peut faire Claude avec un fichier PDF uploadé ?",opts:["Seulement l'afficher","Extraire le texte, résumer, analyser et répondre à des questions","Seulement le convertir en Word","L'imprimer directement"],correct:1,exp:"Claude peut lire, analyser, résumer et répondre à des questions sur le contenu d'un PDF uploadé dans Cowork."},
+     prompt:"Upload ton CV ou un document PDF dans Cowork et dis : 'Analyse ce document et génère un résumé en 5 points clés, identifie les informations manquantes, et suggère des améliorations.'"},
+    {t:"Connecteurs et plugins",d:"Google Drive, OneDrive, agenda...",
+     content:"Les connecteurs permettent à Claude d'accéder à tes services cloud. Tu peux connecter Google Drive pour lire et écrire des fichiers, ou OneDrive pour synchroniser avec ton Windows.",
+     learn:["Connecter Google Drive à Cowork","Connecter OneDrive","Lire et écrire dans le cloud","Connecter son agenda Google Calendar","Intégrer des données externes"],
+     quiz:{q:"Pourquoi connecter OneDrive à Cowork est utile ?",opts:["Pour accélérer Cowork","Pour que Claude puisse lire et écrire des fichiers directement dans ton stockage cloud","Pour avoir plus de RAM","Pour activer des plugins premium"],correct:1,exp:"En connectant OneDrive, Claude peut créer, lire et modifier des fichiers directement dans ton cloud — pas besoin de télécharger/uploader manuellement."},
+     prompt:"Dans Cowork, après avoir connecté OneDrive : 'Liste tous les fichiers présents dans mon dossier Project TRAINING IA et résume leur contenu.'"},
+    {t:"Automatisations simples",d:"Schedule, tâches récurrentes",
+     content:"Cowork permet de planifier des tâches qui s'exécutent automatiquement. Tu peux créer des rapports quotidiens, des analyses hebdomadaires ou des rappels personnalisés.",
+     learn:["Utiliser le skill Schedule de Cowork","Créer une analyse quotidienne automatique","Planifier des rapports hebdomadaires","Configurer des rappels intelligents","Automatiser des tâches répétitives"],
+     quiz:{q:"Le skill Schedule permet de :",opts:["Gérer ton emploi du temps personnel","Planifier des tâches Claude qui s'exécutent automatiquement","Créer des présentations planifiées","Compresser des fichiers"],correct:1,exp:"Schedule permet de programmer des tâches Claude : chaque matin à 8h, chaque lundi, etc. Claude exécute la tâche automatiquement sans que tu aies à intervenir."},
+     prompt:"Utilise le skill Schedule : 'Chaque matin à 7h00, recherche les 3 matchs de basket les plus intéressants de la journée et enregistre une analyse rapide dans mon dossier OneDrive > Analyses_Quotidiennes.txt'"},
+    {t:"Emails et communication",d:"Rédaction, réponses, résumés",
+     content:"L'IA peut transformer ta façon de gérer les emails. Rédaction rapide, amélioration du ton, résumé de longues discussions, traduction et adaptation culturelle.",
+     learn:["Améliorer le ton d'un email","Résumer une longue conversation email","Rédiger des réponses professionnelles","Créer des templates réutilisables","Traduire et adapter des messages"],
+     quiz:{q:"Pour améliorer un email déjà écrit, la meilleure approche est :",opts:["Demander à Claude de 'l'améliorer' sans précision","Utiliser CRITE : 'Améliore cet email pour qu'il soit [ton] + [objectif] + [longueur max]'","Recopier l'email entier à chaque fois","Demander une version en anglais uniquement"],correct:1,exp:"Plus tu es précis dans ta demande, meilleur sera le résultat. Spécifier le ton, l'objectif et les contraintes donne une réponse utilisable directement."},
+     prompt:"Colle un email que tu dois répondre et dis : 'Rédige une réponse professionnelle mais chaleureuse à cet email. Maximum 5 lignes. Ne commence pas par 'Bonjour' — sois original dans l'accroche.'"},
+    {t:"Gestion des données",d:"Excel, CSV, analyse de fichiers",
+     content:"Claude peut analyser des fichiers de données — Excel, CSV, tableaux — et en extraire des insights, créer des graphiques et suggérer des décisions basées sur les données.",
+     learn:["Uploader un fichier Excel dans Cowork","Demander une analyse statistique","Identifier les tendances clés","Créer des visualisations","Générer des recommandations basées sur les données"],
+     quiz:{q:"Que peut faire Claude avec ton fichier de suivi de paris sportifs ?",opts:["Seulement l'afficher","Analyser ton ROI, identifier tes meilleurs marchés, et suggérer des améliorations de stratégie","L'imprimer","Le partager automatiquement"],correct:1,exp:"Claude peut analyser n'importe quelle donnée structurée : calculs, tendances, comparaisons, graphiques et recommandations concrètes."},
+     prompt:"Upload ton fichier Suivi_Paris_Sportifs.xlsx et dis : 'Analyse ce fichier. Quel est mon ROI par sport ? Quel marché est le plus rentable ? Quels sont mes 3 paris les plus et moins réussis ? Donne des recommandations.'"},
+    {t:"Évaluation Phase 2",d:"Bilan et passage à la phase suivante",
+     content:"Félicitations pour la Phase 2 ! Vérifie que tu maîtrises ces compétences avant de continuer.",
+     learn:["J'utilise au moins 3 Skills Cowork régulièrement","J'ai créé une automatisation planifiée","J'ai connecté OneDrive ou Google Drive","Je gère mes emails plus vite avec l'IA","J'ai analysé un fichier de données avec Claude"],
+     quiz:{q:"Quelle est la différence entre un Skill et un Plugin dans Cowork ?",opts:["Ce sont la même chose","Un Skill est une capacité spécialisée (PPTX, XLSX...), un Plugin connecte un service externe (Google Drive...)","Un Plugin est plus rapide","Un Skill nécessite une connexion internet"],correct:1,exp:"Skills = capacités de création de fichiers. Plugins = connexions à des services externes. Les deux sont complémentaires."},
+     prompt:"Crée un workflow complet : 'Chaque dimanche soir à 20h, analyse les matchs de la semaine suivante en basket et foot, génère un rapport Excel avec les 5 meilleures opportunités de paris, et sauvegarde dans OneDrive/Project TRAINING IA/Rapports_Semaine.xlsx'"}
+   ]},
+  {n:"03",title:"GitHub & Collaboration",weeks:"Sem. 6–8",obj:"Avoir un portfolio en ligne sur GitHub Pages",
+   chapters:[
+    {t:"Git et contrôle de version",d:"Concepts fondamentaux : commit, branch, merge",
+     content:"Git est le système de sauvegarde de code le plus utilisé au monde. Il conserve l'historique de chaque modification et permet de collaborer sans se marcher dessus.",
+     learn:["Comprendre le concept de version control","Repository (repo) : le dossier de ton projet","Commit : une sauvegarde commentée","Branch : une branche parallèle de développement","Merge : fusionner deux branches"],
+     quiz:{q:"Qu'est-ce qu'un 'commit' dans Git ?",opts:["Supprimer des fichiers","Une sauvegarde commentée de l'état actuel du code","Partager son code publiquement","Créer une nouvelle branche"],correct:1,exp:"Un commit = un snapshot de ton code à un instant T, avec un message qui explique ce qui a changé. C'est l'unité de base de Git."},
+     prompt:"Demande à Claude : 'Explique-moi Git en 5 analogies du quotidien. Je suis non-développeur et je veux comprendre commit, branch, merge et pull request avec des exemples concrets.'"},
+    {t:"GitHub Desktop",d:"Interface graphique pour Git",
+     content:"GitHub Desktop est l'application qui rend Git accessible sans ligne de commande. Tu peux créer des repos, faire des commits et synchroniser avec GitHub en quelques clics.",
+     learn:["Télécharger et installer GitHub Desktop","Créer un compte GitHub","Créer son premier repository","Faire son premier commit","Synchroniser (push) vers GitHub.com"],
+     quiz:{q:"Quelle est la différence entre Git et GitHub ?",opts:["Ce sont la même chose","Git est le logiciel de versioning local, GitHub est la plateforme en ligne qui l'héberge","GitHub est plus ancien","Git est payant"],correct:1,exp:"Git = logiciel local pour gérer les versions. GitHub = plateforme cloud pour héberger et partager les repos Git. C'est comme Word (logiciel) vs OneDrive (hébergement)."},
+     prompt:"Va sur desktop.github.com, installe l'app, crée un compte sur github.com, puis dis à Claude : 'Guide-moi pas à pas pour créer mon premier repository nommé 'mon-portfolio-ia' et faire un premier commit avec un fichier README.md'"},
+    {t:"GitHub Pages",d:"Publier un site gratuitement",
+     content:"GitHub Pages transforme un repository en site web accessible publiquement gratuitement. C'est l'outil idéal pour publier ton portfolio, ta formation ou tes projets.",
+     learn:["Activer GitHub Pages dans les Settings","Structure d'un site GitHub Pages","Uploader des fichiers HTML/CSS","Avoir une URL personnalisée","Mettre à jour son site avec un commit"],
+     quiz:{q:"Pour activer GitHub Pages, où vas-tu ?",opts:["Sur github.com/pages","Dans les Settings de ton repository > Pages","Dans GitHub Desktop","Via l'API GitHub"],correct:1,exp:"Settings du repo > Pages > choisir la branche source (main) > Save. Ton site sera en ligne en moins de 2 minutes."},
+     prompt:"Dans ton repo 'mon-portfolio-ia', crée un fichier index.html avec ce prompt Claude : 'Crée une page web portfolio personnelle HTML/CSS complète pour me présenter comme apprenant en IA. Design moderne sombre et or. Sections : à propos, compétences IA, projets en cours, contact.'"},
+    {t:"Branching et Pull Requests",d:"Collaboration et révision de code",
+     content:"Les branches permettent de travailler sur une fonctionnalité sans affecter le code principal. Une Pull Request est une demande de fusion après révision.",
+     learn:["Créer une nouvelle branche","Travailler sur une feature isolée","Créer une Pull Request","Réviser et commenter des changements","Fusionner (merge) une PR approuvée"],
+     quiz:{q:"Pourquoi créer une branche plutôt que travailler directement sur main ?",opts:["C'est obligatoire","Pour isoler ses modifications et pouvoir les réviser avant de les intégrer","Pour travailler plus vite","Pour économiser de l'espace"],correct:1,exp:"Les branches permettent d'expérimenter sans risque. Si ça marche, on merge. Sinon, on supprime la branche sans toucher au code principal."},
+     prompt:"Crée une branche 'amelioration-design' dans ton repo portfolio, modifie l'index.html (change les couleurs), puis ouvre une Pull Request. Demande à Claude de 'jouer le rôle d'un reviewer et donner 3 feedbacks constructifs sur les changements.'"},
+    {t:"README et documentation",d:"Documenter ses projets",
+     content:"Un bon README est la carte de visite de ton projet. Il explique ce que fait le projet, comment l'utiliser, et pourquoi il est utile. Claude est excellent pour rédiger des READMEs.",
+     learn:["Structure d'un README professionnel","Badges et statuts de projet","Captures d'écran et GIFs de démo","Instructions d'installation","Licence et crédits"],
+     quiz:{q:"Qu'est-ce qu'un README.md dans un repository GitHub ?",opts:["Un fichier de configuration","La documentation principale du projet, affichée automatiquement sur la page du repo","Un fichier de sauvegarde","Le code principal du projet"],correct:1,exp:"README.md est le premier fichier que voit quelqu'un sur ton repo. C'est ta présentation du projet — pourquoi il existe, comment l'utiliser."},
+     prompt:"Pour ton repo portfolio, dis à Claude : 'Rédige un README.md professionnel pour mon portfolio IA. Inclus : description du projet, technologies utilisées (HTML, Claude AI), lien live GitHub Pages, et une section 'À propos de moi' avec mes compétences IA en cours d'acquisition.'"},
+    {t:"Issues et Project Management",d:"Gérer les tâches et bugs sur GitHub",
+     content:"GitHub Issues est un système de tickets intégré pour suivre les tâches, bugs et améliorations. GitHub Projects crée des tableaux Kanban pour organiser son travail.",
+     learn:["Créer une Issue pour une tâche","Utiliser les labels pour catégoriser","Créer un GitHub Project (Kanban)","Lier une PR à une Issue","Fermer automatiquement avec un commit"],
+     quiz:{q:"À quoi sert une 'Issue' sur GitHub ?",opts:["À supprimer du code","À signaler un bug ou proposer une amélioration sous forme de ticket","À bloquer d'autres contributeurs","À sauvegarder le projet"],correct:1,exp:"Issues = tickets de suivi. Tu y listes tes tâches, bugs à corriger, idées d'améliorations. C'est ton to-do list de projet."},
+     prompt:"Crée 5 Issues dans ton repo pour les améliorations futures de ton portfolio. Demande à Claude : 'Génère 5 Issues GitHub pertinentes pour améliorer mon portfolio IA : titre, description, et label suggéré pour chacune.'"},
+    {t:"Évaluation Phase 3",d:"Bilan et passage à la phase suivante",
+     content:"Phase 3 terminée ! Tu dois maintenant avoir un portfolio en ligne sur GitHub Pages.",
+     learn:["J'ai un compte GitHub actif","Mon portfolio est en ligne sur GitHub Pages","Je sais créer un commit et une PR","Je comprends la différence branch/main","Mon README est clair et professionnel"],
+     quiz:{q:"Ton portfolio GitHub Pages est prêt quand :",opts:["Tu as créé le repo","Tu peux y accéder via https://ton-username.github.io/mon-repo/ depuis n'importe quel appareil","Tu as fait 10 commits","Tu as 5 followers GitHub"],correct:1,exp:"GitHub Pages = site accessible publiquement. Si tu peux y accéder depuis ton téléphone sans être connecté à GitHub, c'est deployé avec succès."},
+     prompt:"Teste ton portfolio depuis ton téléphone, puis dis à Claude : 'Mon portfolio est en ligne sur [url]. Analyse-le comme un recruteur tech et donne-moi 5 améliorations concrètes pour qu'il soit plus professionnel.'"}
+   ]},
+  {n:"04",title:"Créer des Applications",weeks:"Sem. 9–12",obj:"Avoir une application web déployée et accessible publiquement",
+   chapters:[
+    {t:"HTML, CSS, JS basiques",d:"Les 3 langages du web",
+     content:"HTML structure la page, CSS la design, JavaScript l'anime. Avec Claude, tu n'as pas besoin de tout mémoriser — mais comprendre les concepts de base te rend 10x plus efficace.",
+     learn:["Structure d'une page HTML (head, body, div, p)","CSS : couleurs, polices, espacements","JavaScript : interactions et logique simple","Comment Claude génère du code web","Tester dans le navigateur"],
+     quiz:{q:"Pour changer la couleur de fond d'une page web, tu utilises :",opts:["HTML","JavaScript","CSS","Python"],correct:2,exp:"CSS gère le design : couleurs, polices, marges, espacements. background-color est une propriété CSS."},
+     prompt:"Dis à Claude : 'Crée une page HTML simple qui affiche mon nom en grand, une courte bio, et un bouton qui change la couleur de fond au clic. Design minimaliste sombre.'"},
+    {t:"Applications no-code",d:"Glide, Bubble, Webflow",
+     content:"Le no-code permet de créer des applications complètes sans écrire de code. Des plateformes comme Glide (apps mobiles), Bubble (web apps) et Webflow (sites web) ont des interfaces drag-and-drop.",
+     learn:["Créer une app mobile avec Glide depuis un Google Sheet","Explorer Bubble pour des web apps complexes","Webflow pour des sites marketing pro","Connecter des données et APIs","Publier et partager une app no-code"],
+     quiz:{q:"Quelle plateforme no-code est idéale pour créer une app mobile depuis un Google Sheet ?",opts:["Webflow","Bubble","Glide","Figma"],correct:2,exp:"Glide transforme un Google Sheet en application mobile en quelques minutes. Parfait pour des cas simples comme des listes, répertoires ou trackers."},
+     prompt:"Va sur glideapps.com, crée un compte gratuit, et dis à Claude : 'Guide-moi pour créer une app Glide depuis un Google Sheet qui liste mes paris sportifs avec les colonnes : Date, Match, Marché, Résultat.'"},
+    {t:"Déploiement web",d:"Vercel, Netlify, Render",
+     content:"Vercel et Netlify sont les plateformes de déploiement préférées des développeurs modernes. En 2 minutes, ton site HTML/React est en ligne sur une URL publique.",
+     learn:["Créer un compte Vercel ou Netlify","Connecter son repository GitHub","Déploiement automatique à chaque commit","Variables d'environnement (secrets)","Domaine personnalisé gratuit"],
+     quiz:{q:"Quel est l'avantage du déploiement automatique (CI/CD) ?",opts:["Il sauvegarde le code","Chaque commit sur GitHub met automatiquement le site en ligne","Il améliore la performance","Il crée des sauvegardes"],correct:1,exp:"Avec Vercel/Netlify connecté à GitHub : tu fais un commit → le site est mis à jour automatiquement en 30 secondes. Zéro manipulation manuelle."},
+     prompt:"Connecte ton repo portfolio GitHub à Vercel : va sur vercel.com, 'Import Project', sélectionne ton repo. Ensuite dis à Claude : 'Mon site est sur [url vercel]. Ajoute une section contact avec un formulaire Formspree fonctionnel.'"},
+    {t:"Progressive Web Apps (PWA)",d:"Apps installables depuis le web",
+     content:"Une PWA est un site web qui peut s'installer sur l'écran d'accueil comme une vraie app. Tu l'as déjà fait avec MAGIXX PRO ! Les PWAs fonctionnent hors ligne.",
+     learn:["Qu'est-ce qu'un Service Worker","Créer un fichier manifest.json","Rendre une app installable sur Android","Mode hors-ligne avec cache API","Icônes et splash screen"],
+     quiz:{q:"Comment installer une PWA sur Android ?",opts:["Via le Google Play Store","Ouvrir l'URL dans Chrome > 3 points > Ajouter à l'écran d'accueil","Télécharger un .apk","Via un QR code"],correct:1,exp:"Chrome détecte automatiquement une PWA et propose de l'installer. Ton app MAGIXX PRO sur GitHub Pages en est un exemple."},
+     prompt:"Dis à Claude : 'Ajoute les fichiers manifest.json et sw.js à mon portfolio pour le transformer en PWA. L'icône doit être un carré sombre avec mes initiales en or. Donne-moi aussi les meta tags à ajouter dans le head.'"},
+    {t:"Bases de données simples",d:"Airtable, Firebase, Supabase",
+     content:"Pour stocker des données persistantes, tu as besoin d'une base de données. Airtable est parfait pour débuter (interface tableur), Firebase pour des apps en temps réel.",
+     learn:["Créer une base Airtable","Lier Airtable à une app web","Intro à Firebase (Firestore)","Requêtes simples (lire, écrire)","Authentification avec Google"],
+     quiz:{q:"Pour une app simple de suivi de paris, quelle base de données recommandes-tu en premier ?",opts:["PostgreSQL","MongoDB","Airtable (no-code, interface tableur)","Oracle"],correct:2,exp:"Airtable = base de données no-code avec interface tableur. Parfait pour commencer sans code. Tu peux ensuite migrer vers une BDD plus robuste."},
+     prompt:"Va sur airtable.com, crée une base 'Suivi Paris Sportifs' avec les colonnes de ton Excel. Puis dis à Claude : 'Crée une page HTML simple qui se connecte à mon Airtable [API key] et affiche mes derniers paris en tableau. Design MAGIXX PRO sombre et or.'"},
+    {t:"APIs REST basiques",d:"Consommer des données externes",
+     content:"Une API est une porte d'accès à des données ou services externes. En appelant l'API OpenWeather, tu obtiens la météo. En appelant l'API Sofascore, tu obtiens des scores sportifs.",
+     learn:["Comprendre ce qu'est une API REST","GET vs POST requests","Utiliser fetch() en JavaScript","Headers et authentification","Parser une réponse JSON"],
+     quiz:{q:"Que retourne une API REST typiquement ?",opts:["Un fichier Word","Des données en format JSON","Une page HTML","Un fichier CSV"],correct:1,exp:"Les APIs REST retournent généralement du JSON (JavaScript Object Notation) — un format texte structuré facilement lisible par les programmes."},
+     prompt:"Dis à Claude : 'Crée une petite page HTML qui appelle l'API publique 'https://jsonplaceholder.typicode.com/posts/1' et affiche le titre et le contenu de l'article. Explique chaque ligne de code.'"},
+    {t:"Évaluation Phase 4",d:"Bilan et passage à la phase suivante",
+     content:"Phase 4 terminée ! Tu as maintenant les bases pour créer et déployer des applications web.",
+     learn:["J'ai une app ou site déployé et accessible en ligne","Je comprends HTML/CSS/JS basiques","J'ai expérimenté avec un outil no-code","Ma première app est installable comme PWA","Je comprends le concept d'API"],
+     quiz:{q:"Quelle est la meilleure plateforme pour déployer rapidement un site HTML gratuit ?",opts:["Amazon AWS","Google Cloud","Vercel ou Netlify","Microsoft Azure"],correct:2,exp:"Vercel et Netlify offrent des déploiements gratuits illimités pour des projets personnels. Connexion GitHub et mise en ligne en 2 minutes."},
+     prompt:"Fais le bilan de ta Phase 4 : liste tes 3 créations (avec les URLs), les difficultés rencontrées, et dis à Claude : 'Comment améliorer [ta meilleure création] pour qu'elle soit vraiment utile à d'autres personnes ?'"}
+   ]},
+  {n:"05",title:"Agents IA & Automatisations",weeks:"Sem. 13–15",obj:"Automatiser 3 tâches récurrentes de ta vie professionnelle",
+   chapters:[
+    {t:"Comprendre les agents IA",d:"MCP, Claude Code, autonomie",
+     content:"Un agent IA peut planifier et exécuter des tâches de manière autonome. Claude Code peut modifier du code, créer des fichiers, et exécuter des scripts sans ton intervention constante.",
+     learn:["Différence entre chat IA et agent IA","MCP : Model Context Protocol","Claude Code : l'IA qui code pour toi","Définir des objectifs clairs pour un agent","Superviser et corriger un agent"],
+     quiz:{q:"Qu'est-ce qui différencie un agent IA d'un simple chatbot ?",opts:["L'agent est plus intelligent","L'agent peut planifier et exécuter des actions de manière autonome","L'agent répond plus vite","L'agent ne fait pas d'erreurs"],correct:1,exp:"Un agent IA peut prendre des décisions, exécuter des outils, appeler des APIs et accomplir des objectifs multi-étapes — pas juste répondre à une question."},
+     prompt:"Dis à Claude : 'Agis comme un agent de productivité. Analyse ma semaine : j'ai ces tâches [liste]. Crée un planning optimal, identifie ce qui peut être automatisé avec l'IA, et génère les prompts exacts pour chaque automatisation.'"},
+    {t:"Make et Zapier",d:"Automatisations visuelles sans code",
+     content:"Make (ex-Integromat) et Zapier permettent de créer des automatisations entre apps sans code. Email reçu → crée une tâche Notion → envoie un Slack → sauvegarde dans Google Sheet.",
+     learn:["Créer un compte Make.com gratuit","Comprendre Scenarios et Modules","Connecter Gmail + Google Sheets","Automatiser une notification Slack","Créer un webhook pour déclencher une action"],
+     quiz:{q:"Dans Make, que représente un 'Scenario' ?",opts:["Une sauvegarde du projet","Un workflow automatisé composé de modules connectés","Un compte utilisateur","Un modèle de données"],correct:1,exp:"Un Scenario Make = un workflow automatisé. Exemple : Scenario 'Analyse Paris' = chaque soir à 22h, récupère les matchs du lendemain → analyse avec Claude → sauvegarde dans Google Sheets."},
+     prompt:"Va sur make.com, crée un compte gratuit. Puis dis à Claude : 'Crée le plan détaillé d'un Scenario Make qui : 1) se déclenche tous les matins à 7h, 2) appelle l'API Sofascore pour les matchs du jour, 3) envoie les résultats à mon email. Donne les étapes exactes.'"},
+    {t:"Créer ses propres Skills",d:"Skills Cowork personnalisés",
+     content:"Tu peux créer tes propres Skills Cowork pour des tâches répétitives spécifiques à ton activité. Un skill 'Analyse Paris MAGIXX' qui s'active automatiquement quand tu parles d'un match.",
+     learn:["Structure d'un fichier SKILL.md","Créer un skill d'analyse sportive","Créer un skill de gestion bankroll","Tester et améliorer un skill","Partager ses skills en .skill file"],
+     quiz:{q:"Un fichier SKILL.md sert à :",opts:["Installer des logiciels","Définir les instructions et le comportement d'un skill Claude personnalisé","Créer des présentations","Gérer les permissions"],correct:1,exp:"SKILL.md = la fiche d'instructions de ton skill. Il définit quand et comment Claude doit s'activer, quelle expertise adopter, et comment structurer ses réponses."},
+     prompt:"Dis à Claude dans Cowork : 'Crée un fichier SKILL.md pour un skill 'Analyse Paris Pro' qui : s'active automatiquement pour tout match basketball, collecte les stats sur Sofascore, applique le système MAGIXX PRO (Module A/B/C), et fournit l'output en format Excel-collable.'"},
+    {t:"Automatiser ses rapports",d:"Rapports quotidiens et hebdomadaires",
+     content:"L'automatisation des rapports libère des heures chaque semaine. Un rapport quotidien de performance des paris, un résumé hebdomadaire des résultats, un bilan mensuel — tous automatisés.",
+     learn:["Définir la structure de tes rapports","Créer une tâche planifiée dans Cowork","Connecter les données sources","Mettre en forme automatiquement","Envoyer par email ou sauvegarder"],
+     quiz:{q:"Pour automatiser un rapport hebdomadaire, quelle combinaison utilises-tu ?",opts:["Make + Google Sheets + Gmail","Seulement Excel","Seulement Claude","Seulement Zapier"],correct:0,exp:"La combo Make + Google Sheets + Gmail est idéale : Make déclenche le workflow, Google Sheets fournit les données, Claude génère l'analyse, Gmail envoie le rapport."},
+     prompt:"Crée un template de rapport hebdomadaire : 'Génère un rapport hebdomadaire de mes paris sportifs pour la semaine du [dates]. Inclus : Résumé performance (total/gagnés/perdus/ROI), 3 meilleures et 3 moins bonnes décisions, recommandations pour la semaine suivante. Format: tableau + paragraphe synthèse.'"},
+    {t:"Claude Code et GitHub",d:"L'IA qui code et déploie pour toi",
+     content:"Claude Code peut modifier des fichiers dans ton repository, créer des branches, écrire du code et même lancer des tests — directement depuis le terminal ou Cowork.",
+     learn:["Installer Claude Code (CLI)","Donner accès à un repository","Demander des modifications de code","Créer des branches automatiquement","Vérifier et approuver les changements"],
+     quiz:{q:"Claude Code peut :",opts:["Seulement lire du code","Lire, modifier, créer des fichiers et exécuter des commandes dans ton projet","Seulement expliquer du code","Seulement traduire du code"],correct:1,exp:"Claude Code est un agent qui a accès à ton système de fichiers et peut exécuter des commandes. Il peut modifier ton code, créer des fichiers, lancer des tests."},
+     prompt:"Dans un terminal : installe Claude Code avec 'npm install -g @anthropic-ai/claude-code'. Puis navigue dans ton repo portfolio et tape : 'claude-code add a dark mode toggle to the website with a button in the top right corner'."},
+    {t:"Monitoring et alertes",d:"Surveiller ses automatisations",
+     content:"Une automatisation qui échoue silencieusement est pire que pas d'automatisation. Tu dois mettre en place des alertes et vérifier régulièrement que tout fonctionne.",
+     learn:["Créer des logs d'exécution","Configurer des alertes d'erreur","Vérifier les résultats périodiquement","Récupérer d'une erreur automatiquement","Dashboard de monitoring simple"],
+     quiz:{q:"Pourquoi monitorer ses automatisations est important ?",opts:["Pour impressionner les recruteurs","Pour détecter les pannes avant qu'elles causent des problèmes","C'est optionnel","Pour accélérer les automatisations"],correct:1,exp:"Sans monitoring, une automatisation peut échouer pendant des jours sans que tu le saches. Un simple log + email d'alerte te prévient immédiatement."},
+     prompt:"Dis à Claude : 'Crée un script Python simple qui vérifie si mon fichier Analyses_Quotidiennes.txt dans OneDrive a été mis à jour aujourd'hui. Si non, envoie un email d'alerte à mon adresse. Commente chaque ligne pour que je comprenne.'"},
+    {t:"Évaluation Phase 5",d:"Bilan et passage à la phase suivante",
+     content:"Phase 5 terminée ! Tu dois maintenant avoir 3 automatisations actives dans ta vie quotidienne.",
+     learn:["J'ai 3 automatisations actives (Make ou Cowork Schedule)","J'ai créé au moins un Skill personnalisé","Mes rapports hebdomadaires sont automatisés","Je sais superviser et corriger une automatisation","J'ai utilisé Claude Code sur un vrai projet"],
+     quiz:{q:"Combien d'automatisations dois-tu avoir à la fin de la Phase 5 ?",opts:["1","Au moins 3","10","Autant que possible"],correct:1,exp:"3 automatisations actives = l'objectif Phase 5. Cela peut être : rapport quotidien paris, emails automatiques, analyse hebdomadaire. Qualité > quantité."},
+     prompt:"Liste tes 3 automatisations actives. Pour chacune, dis à Claude : 'Analyse cette automatisation [décris-la]. Comment puis-je la rendre 2x plus utile et robuste ? Donne 3 améliorations concrètes.'"}
+   ]},
+  {n:"06",title:"IA Appliquée aux Métiers",weeks:"Sem. 16–18",obj:"Créer un outil IA spécifique à ton domaine professionnel",
+   chapters:[
+    {t:"IA pour les paris sportifs",d:"Système MAGIXX PRO optimisé",
+     content:"L'IA peut transformer ton analyse sportive. Collecte de données en temps réel, modélisation statistique, détection de value bets, gestion de bankroll — tout peut être automatisé et amélioré.",
+     learn:["Créer un skill d'analyse sportive avancé","Automatiser la collecte de stats (Sofascore, FlashScore)","Modèle de prédiction avec données historiques","Backtesting sur données passées","Alertes de value bets en temps réel"],
+     quiz:{q:"Pour améliorer tes analyses MAGIXX PRO avec l'IA, la première étape est :",opts:["Acheter des données premium","Créer une base de données historique de tes paris pour entraîner le modèle","Changer de bookmaker","Regarder plus de matchs"],correct:1,exp:"Les données historiques sont la matière première. Plus tu as de données sur tes paris passés (résultats, marchés, cotes), plus l'IA peut identifier les patterns gagnants."},
+     prompt:"Dis à Claude : 'Analyse mon fichier de suivi de paris [upload Excel]. Identifie mes 3 patterns de succès et 3 patterns d'échec. Propose un modèle de scoring (0-100) pour évaluer chaque pari avant de miser, basé sur mes données historiques.'"},
+    {t:"IA pour la productivité",d:"GTD, gestion de projet, réunions",
+     content:"L'IA révolutionne la productivité. Résumés de réunions, création automatique de tâches depuis les emails, priorisation intelligente, comptes-rendus en 30 secondes.",
+     learn:["Transcrire et résumer une réunion","Créer des to-do listes depuis des emails","Priorisation IA (Eisenhower + contexte)","Générer des comptes-rendus professionnels","Délégation et suivi de tâches"],
+     quiz:{q:"Comment utiliser l'IA pour une réunion de 1h ?",opts:["La remplacer par l'IA","Enregistrer, transcrire avec Whisper/Otter.ai, puis demander à Claude de générer le compte-rendu et les actions","Ne pas utiliser l'IA en réunion","L'enregistrer et l'envoyer à l'IA après 24h"],correct:1,exp:"Workflow réunion : enregistrement → transcription automatique → Claude génère compte-rendu + liste d'actions avec responsables + suivi. Une heure de réunion résumée en 2 minutes."},
+     prompt:"Après ta prochaine réunion ou appel, copie les notes et dis à Claude : 'Voici mes notes de réunion [colle les notes]. Génère : 1) Un compte-rendu en 5 bullet points, 2) La liste des actions avec responsable et deadline, 3) Un email de suivi à envoyer aux participants.'"},
+    {t:"IA pour l'analyse de données",d:"Pandas, Excel, visualisation",
+     content:"Avec Python et Claude, tu peux analyser n'importe quel dataset — ventes, paris, stocks, performances. Claude écrit le code, tu comprends les résultats.",
+     learn:["Introduction à Pandas (sans coder)","Analyser des données avec Claude comme interprète","Créer des graphiques automatiquement","Identifier des anomalies et tendances","Construire un dashboard de données"],
+     quiz:{q:"Pour analyser tes données de paris sans apprendre Python, la meilleure approche est :",opts:["Embaucher un data scientist","Uploader ton Excel dans Cowork et demander à Claude d'analyser","Acheter un logiciel BI","Tout faire à la main"],correct:1,exp:"Claude peut analyser directement les données d'un fichier Excel uploadé — stats, graphiques, tendances, anomalies. Pas besoin de Python pour des analyses courantes."},
+     prompt:"Upload ton fichier de suivi Excel et dis : 'Analyse ce dataset de paris sportifs. Génère : 1) Statistiques descriptives (moyenne, médiane, écart-type des cotes et mises), 2) Graphique de l'évolution du bankroll dans le temps, 3) Heatmap des performances par sport et par jour de semaine, 4) Modèle de régression simple pour prédire le résultat.'"},
+    {t:"IA pour le contenu",d:"Copywriting, SEO, réseaux sociaux",
+     content:"L'IA peut créer du contenu en masse et de qualité : articles de blog, posts LinkedIn, newsletters, scripts vidéo. La clé est de lui donner ta voix et tes contraintes.",
+     learn:["Créer une stratégie de contenu avec l'IA","Écrire des articles SEO-optimisés","Générer des posts pour tous les réseaux","Adapter le ton par plateforme","Créer une newsletter automatisée"],
+     quiz:{q:"Pour que Claude écrive dans 'ta voix', tu dois :",opts:["Rien — Claude s'adapte automatiquement","Lui fournir 3-5 exemples de tes anciens textes et lui demander d'analyser ton style","Payer la version premium","Écrire en MAJUSCULES"],correct:1,exp:"La technique du 'style transfer' : fournis des exemples de tes textes, Claude extrait tes patterns d'écriture (mots favoris, longueur des phrases, ton) et les réplique."},
+     prompt:"Fournis 3 de tes posts ou messages écrits à Claude : 'Analyse mon style d'écriture depuis ces exemples. Puis rédige un post LinkedIn sur [sujet lié à tes activités IA] en utilisant exactement mon style. Il doit sonner comme moi, pas comme une IA.'"},
+    {t:"IA et créativité",d:"Images, vidéos, sons",
+     content:"L'IA générative s'étend au-delà du texte. Midjourney, DALL-E, Sora, ElevenLabs — créer des images, vidéos et contenus audio en quelques secondes.",
+     learn:["Générer des images avec DALL-E ou Midjourney","Créer des voix synthétiques avec ElevenLabs","Intro à la génération vidéo (Sora, Runway)","Prompts efficaces pour images","Droits et éthique des contenus IA"],
+     quiz:{q:"Pour créer une image IA de qualité, le facteur le plus important est :",opts:["Choisir la bonne IA","La puissance de l'ordinateur","La qualité et la précision du prompt","Payer la version premium"],correct:2,exp:"Un mauvais prompt donne de mauvaises images même avec les meilleures IA. Être précis sur le style, l'éclairage, la composition et les détails fait toute la différence."},
+     prompt:"Génère une image de ta marque avec DALL-E (disponible dans ChatGPT Plus) ou Ideogram.ai (gratuit) avec ce prompt : 'Professional logo for MAGIXX PRO sports betting analytics platform. Dark background, gold accents, minimalist basketball and graph iconography, modern tech aesthetic.'"},
+    {t:"Monétiser ses compétences IA",d:"Freelance, SaaS, consulting",
+     content:"Tes compétences IA ont une vraie valeur marchande. De nombreuses entreprises cherchent des experts capables d'implémenter des solutions IA dans leurs processus.",
+     learn:["Identifier ses services IA monnayables","Créer une offre de services (pricing)","Plateformes : Malt, Upwork, LinkedIn","Construire un portfolio de projets IA","Premier client : où le trouver"],
+     quiz:{q:"Quelle compétence IA est la plus demandée en 2026 pour les freelances ?",opts:["Savoir programmer des IA from scratch","Savoir implémenter et configurer des solutions IA existantes pour des entreprises","Avoir un diplôme en ML","Maîtriser Python parfaitement"],correct:1,exp:"La majorité des entreprises veulent quelqu'un qui sache connecter et configurer des outils IA existants (Claude, Make, Cowork) à leurs processus — pas développer des IA from scratch."},
+     prompt:"Dis à Claude : 'Crée mon offre de services IA freelance en 3 formules (Starter/Standard/Premium) basées sur mes compétences actuelles : [liste tes compétences des phases 1-5]. Inclus : description, délais, prix indicatifs, et 3 types de clients cibles.'"},
+    {t:"Évaluation Phase 6",d:"Bilan et passage au niveau Master",
+     content:"Phase 6 terminée ! Tu dois maintenant avoir créé un outil IA spécifique à ton domaine.",
+     learn:["J'ai créé un outil IA spécifique à mon activité principale","J'utilise l'IA pour analyser mes données régulièrement","J'ai automatisé la création de contenu","Je sais identifier des opportunités de monetisation","Je peux expliquer la valeur de l'IA à un non-technicien"],
+     quiz:{q:"Comment prouver la valeur de l'IA à un client potentiel ?",opts:["Avec des présentations techniques","Avec des résultats concrets et chiffrés (temps gagné, ROI amélioré)","En parlant de GPT et LLMs","En montrant des démos techniques"],correct:1,exp:"Les clients veulent des résultats, pas de la technologie. 'J'ai automatisé X qui prenait 3h/semaine, maintenant 0h' ou 'ROI amélioré de 15% grâce à l'analyse IA' — voilà ce qui convainc."},
+     prompt:"Fais le bilan de ta Phase 6 : décris l'outil IA que tu as créé, les résultats mesurables obtenus, et dis à Claude : 'Comment transformer cet outil en service vendable à d'autres personnes dans mon secteur ? Donne-moi un plan en 5 étapes.'"}
+   ]},
+  {n:"07",title:"Niveau Master & Capstone",weeks:"Sem. 19–20",obj:"Lancer un produit ou service IA utilisable par d'autres",
+   chapters:[
+    {t:"Architecture de systèmes IA",d:"Multi-agents, RAG, fine-tuning",
+     content:"À ce niveau, tu conçois des systèmes IA complexes. RAG (Retrieval-Augmented Generation) permet à l'IA de chercher dans tes données avant de répondre. Les agents multi-étapes accomplissent des missions complexes.",
+     learn:["Comprendre le RAG et ses cas d'usage","Embeddings et recherche vectorielle","Architecture multi-agents","Fine-tuning vs prompting vs RAG","Choisir la bonne architecture selon le cas d'usage"],
+     quiz:{q:"Qu'est-ce que le RAG (Retrieval-Augmented Generation) ?",opts:["Un outil de génération d'images","Une technique où l'IA cherche dans une base de données externe avant de répondre","Un type de réseau de neurones","Un format de fichier"],correct:1,exp:"RAG = l'IA cherche des informations pertinentes dans ta base de connaissance, puis génère une réponse enrichie. Exemple : un chatbot qui répond en cherchant dans tes 1000 pages de documentation."},
+     prompt:"Dis à Claude : 'Explique-moi le RAG avec un exemple concret pour mon activité de paris sportifs. Comment pourrais-je construire un système RAG qui cherche dans 2 ans de données historiques de matchs pour améliorer mes prédictions ?'"},
+    {t:"API Claude et intégrations",d:"SDK, webhooks, microservices",
+     content:"L'API Claude permet d'intégrer l'IA directement dans tes applications. Pas besoin de Cowork — tu appelles l'API depuis ton code et Claude répond en quelques secondes.",
+     learn:["Créer une clé API sur console.anthropic.com","Premier appel API avec curl ou Python","Comprendre les tokens et les coûts","Intégration dans une app web","Streaming et responses en temps réel"],
+     quiz:{q:"Quel est l'avantage d'utiliser l'API Claude directement plutôt que Cowork ?",opts:["C'est gratuit","Tu intègres Claude dans tes propres applications et produits","C'est plus rapide","Il n'y a pas de différence"],correct:1,exp:"L'API te permet d'intégrer Claude dans tes propres apps : ton site web, ton app mobile, tes scripts automatisés. Cowork c'est pour toi, l'API c'est pour tes produits."},
+     prompt:"Va sur console.anthropic.com, crée une clé API. Puis dis à Claude : 'Écris un script Python complet qui prend un match sportif en entrée (ex: Lakers vs Celtics NBA) et retourne une analyse complète MAGIXX PRO en appelant l'API Claude. Commente tout le code.'"},
+    {t:"Sécurité et déploiement prod",d:"HTTPS, auth, rate limiting",
+     content:"Un produit en production a des exigences de sécurité différentes d'un prototype. Authentification, HTTPS, protection contre les abus, monitoring — ce sont les bases pour un produit fiable.",
+     learn:["HTTPS et certificats SSL (Let's Encrypt)","Authentification : JWT, OAuth, Supabase Auth","Rate limiting pour protéger l'API","Variables d'environnement et secrets","Logging et alertes en production"],
+     quiz:{q:"Pourquoi ne jamais mettre une clé API dans le code source ?",opts:["Ça ralentit le code","Quelqu'un pourrait lire ton code et utiliser ta clé à ta place (et à tes frais)","C'est une règle optionnelle","Pour des raisons de performance"],correct:1,exp:"Une clé API dans le code = n'importe qui peut la voler si ton code est public. Toujours utiliser des variables d'environnement (.env) et ne jamais committer les secrets."},
+     prompt:"Dis à Claude : 'Mon app MAGIXX PRO utilise l'API Claude. Quelles sont les 5 mesures de sécurité minimum à implémenter avant de la mettre en production ? Donne le code pour chacune (validation input, rate limiting, logging, auth simple, protection CORS).'"},
+    {t:"Éthique et impact de l'IA",d:"Biais, transparence, responsabilité",
+     content:"Avec la puissance de l'IA vient une responsabilité. Biais algorithmiques, désinformation, impact sur l'emploi, vie privée — ce sont des sujets que tout créateur IA doit maîtriser.",
+     learn:["Identifier et corriger les biais dans les prompts","Transparence : quand dire que c'est de l'IA ?","RGPD et données personnelles","Impact environnemental de l'IA","Créer des IA responsables et équitables"],
+     quiz:{q:"Quand doit-on indiquer qu'un contenu a été créé avec l'IA ?",opts:["Jamais","Toujours, dans tous les cas","Quand le contenu peut induire en erreur ou a un impact important (médical, légal, journalistique)","Seulement quand on le demande"],correct:2,exp:"Il n'y a pas de règle universelle, mais l'éthique recommande la transparence quand le contexte le justifie : décisions importantes, contenus de santé, informations factuelles. Le bon sens prime."},
+     prompt:"Dis à Claude : 'Analyse mon système MAGIXX PRO d'analyse de paris sous l'angle éthique. Y a-t-il des risques de biais dans mon approche ? Quelles données pourraient être biaisées ? Comment puis-je rendre mon système plus transparent et équitable ?'"},
+    {t:"Veille technologique IA",d:"Rester à jour dans un domaine qui évolue vite",
+     content:"L'IA évolue à une vitesse folle. Nouveaux modèles, nouvelles capacités, nouvelles réglementations — la veille est indispensable pour rester compétitif et pertinent.",
+     learn:["Sources fiables : Anthropic blog, OpenAI blog, AI Twitter","Créer une newsletter de veille automatisée","Tester les nouveaux modèles dès leur sortie","Évaluer l'impact sur ses projets","Contribuer à la communauté (partager, écrire)"],
+     quiz:{q:"Quelle est la meilleure façon de rester à jour sur les avancées IA ?",opts:["Lire tous les papiers de recherche","Suivre les blogs officiels des labs (Anthropic, OpenAI) + X/Twitter IA + automatiser une veille hebdomadaire","Attendre que les médias mainstream en parlent","Acheter des livres sur l'IA"],correct:1,exp:"Combo gagnant : blogs officiels (Anthropic, OpenAI, Google DeepMind) + X/Twitter (suivre les chercheurs) + automatiser une veille avec Make/Claude pour ne rien rater."},
+     prompt:"Crée ton système de veille IA : 'Configure un Make Scenario qui : 1) Collecte chaque lundi matin les dernières news IA des 5 sources clés [liste], 2) Demande à Claude de les résumer en 5 bullet points, 3) Envoie le résumé par email. Donne les étapes exactes.'"},
+    {t:"Contribution open source",d:"GitHub, communautés, partage",
+     content:"Contribuer à l'open source est le meilleur moyen d'apprendre, de te faire connaître et de rendre service à la communauté. Même débutant, tu peux contribuer à la documentation ou aux tests.",
+     learn:["Trouver des projets IA auxquels contribuer","Fork, modifier, Pull Request","Écrire de la bonne documentation","Signaler et corriger des bugs","Créer son propre projet open source"],
+     quiz:{q:"Comment commencer à contribuer à l'open source sans être expert ?",opts:["Attendre d'être très bon","Contribuer à la documentation, aux traductions ou aux tests — pas besoin de coder","Créer son propre langage de programmation","Forker tous les repos populaires"],correct:1,exp:"Documentation, traductions, rapports de bugs, typos dans les READMEs — voilà par où commencer. Les projets adorent les contributeurs sérieux même débutants."},
+     prompt:"Cherche sur GitHub un projet IA que tu utilises (ex: un skill Cowork ou un projet Claude). Identifie une issue marquée 'good first issue'. Dis à Claude : 'Voici l'issue [description]. Comment puis-je la corriger ? Guide-moi étape par étape pour faire ma première contribution open source.'"},
+    {t:"Projet Capstone — Déploiement Final",d:"Lancer ton produit IA dans le monde réel",
+     content:"Le Projet Capstone est la culmination de ta formation. Tu dois créer un produit ou service IA complet, le déployer, et le rendre accessible à d'autres utilisateurs.",
+     learn:["Définir ton produit IA (problème + solution)","Architecture technique complète","Landing page et marketing","Onboarding des premiers utilisateurs","Mesurer et itérer (product-market fit)"],
+     quiz:{q:"Ton Projet Capstone est réussi quand :",opts:["Tu l'as terminé de coder","Au moins 3 personnes hors de toi l'utilisent régulièrement","Tu as 1000 utilisateurs","Il génère des revenus"],correct:1,exp:"3 utilisateurs réels = validation de base. Si 3 personnes trouvent ton produit assez utile pour l'utiliser régulièrement, tu as atteint le minimum viable. Tout le reste est de l'itération."},
+     prompt:"C'est le moment. Définis ton Capstone : 'Mon projet IA Capstone résout ce problème : [problème]. Ma solution : [description]. Mon utilisateur cible : [persona]. Dis à Claude : Crée un plan de lancement complet en 10 étapes, avec les outils IA à utiliser pour chaque étape, les délais réalistes, et les métriques de succès.'"}
+   ]}
+];
+
+var store={};
+function ld(){try{var s=localStorage.getItem("mxf");if(s)store=JSON.parse(s);}catch(e){}}
+function sv(){try{localStorage.setItem("mxf",JSON.stringify(store));}catch(e){}}
+ld();
+
+var TOTAL_CH=DATA.reduce(function(s,p){return s+p.chapters.length;},0);
+var curPhase=0,curCh=0;
+
+function getPct(){
+  var done=0;
+  DATA.forEach(function(_,pi){
+    _.chapters.forEach(function(__,ci){
+      if(store["ck_"+pi+"_"+ci])done++;
+    });
+  });
+  return Math.round(done/TOTAL_CH*100);
+}
+
+function updateAll(){
+  var done=0;
+  DATA.forEach(function(_,pi){_.chapters.forEach(function(__,ci){if(store["ck_"+pi+"_"+ci])done++;});});
+  var pct=Math.round(done/TOTAL_CH*100);
+  document.getElementById("progFill").style.width=pct+"%";
+  document.getElementById("progLabel").textContent=done+" / "+TOTAL_CH+" chapitres";
+  document.getElementById("heroScore").textContent=pct+"%";
+  document.getElementById("topPct").textContent=pct+"% complété";
+  if(document.getElementById("bilanPct")){updateBilan(done,pct);}
+  DATA.forEach(function(p,pi){
+    var cd=0;p.chapters.forEach(function(_,ci){if(store["ck_"+pi+"_"+ci])cd++;});
+    var pEl=document.getElementById("ph-pct-"+pi);
+    if(pEl){pEl.textContent=cd+"/"+p.chapters.length;pEl.className="ph-pct"+(cd==p.chapters.length?" done":"");}
+    var bEl=document.getElementById("bp-bar-"+pi);
+    if(bEl){bEl.style.width=Math.round(cd/p.chapters.length*100)+"%";}
+    var bpEl=document.getElementById("bp-pct-"+pi);
+    if(bpEl){bpEl.textContent=Math.round(cd/p.chapters.length*100)+"%";}
+  });
+}
+
+function updateBilan(done,pct){
+  document.getElementById("bilanPct").textContent=pct+"%";
+  var msgs=["Commence la formation pour voir ton avancement","C\'est parti ! Continue comme ça 💪","Tu progresses bien ! Phase 2 en cours","Excellent ! Plus de la moitié — continue !","Impressionnant ! Plus que quelques phases","Tu es presque expert ! Phase finale !","🏆 Formation 100% complète ! Tu es Maître IA !"];
+  var mi=pct==100?6:Math.floor(pct/100*6);
+  document.getElementById("bilanMsg").textContent=msgs[mi];
+  var qd=0;DATA.forEach(function(_,pi){if(store["quiz_"+pi]!=null)qd++;});
+  document.getElementById("bChap").textContent=done+"/"+TOTAL_CH;
+  document.getElementById("bQuiz").textContent=qd+"/"+DATA.length;
+  var ph=1;DATA.forEach(function(p,pi){var cd=0;p.chapters.forEach(function(_,ci){if(store["ck_"+pi+"_"+ci])cd++;});if(cd==p.chapters.length)ph=pi+2;});
+  ph=Math.min(ph,7);
+  document.getElementById("bPhase").textContent="Phase "+ph;
+  var ss=0,sc=0;DATA.forEach(function(_,pi){if(store["star_"+pi]){ss+=store["star_"+pi];sc++;}});
+  document.getElementById("bNote").textContent=sc?"★"+(Math.round(ss/sc*10)/10)+"/5":"—";
+}
+
+function buildProgramme(){
+  var c=document.getElementById("phasesContainer");
+  DATA.forEach(function(p,pi){
+    var cd=0;p.chapters.forEach(function(_,ci){if(store["ck_"+pi+"_"+ci])cd++;});
+    var el=document.createElement("div");el.className="phase-card";
+    el.innerHTML="<div class=\"ph-hd\" onclick=\"togglePhase("+pi+")\">"
+      +"<div class=\"ph-badge\">P"+p.n+"</div>"
+      +"<div class=\"ph-info\"><div class=\"ph-title\">Phase "+p.n+" — "+p.title+"</div><div class=\"ph-sub\">"+p.weeks+" · "+p.obj.substring(0,50)+"...</div></div>"
+      +"<div class=\"ph-right\"><span class=\"ph-pct"+(cd==p.chapters.length?" done":"")+" \" id=\"ph-pct-"+pi+"\">"+cd+"/"+p.chapters.length+"</span><i class=\"ti ti-chevron-right ph-arrow\"></i></div></div>"
+      +"<div class=\"ph-body\"><div class=\"ph-obj\">🎯 "+p.obj+"</div><div class=\"ph-chapters\" id=\"ph-chs-"+pi+"\"></div></div>";
+    c.appendChild(el);
+  });
+}
+
+function togglePhase(pi){
+  var card=document.getElementById("phasesContainer").children[pi];
+  var wasOpen=card.classList.contains("open");
+  document.querySelectorAll(".phase-card").forEach(function(c){c.classList.remove("open");});
+  if(!wasOpen){
+    card.classList.add("open");
+    var chsEl=document.getElementById("ph-chs-"+pi);
+    if(!chsEl.dataset.built){
+      DATA[pi].chapters.forEach(function(ch,ci){
+        var done=store["ck_"+pi+"_"+ci]||false;
+        var d=document.createElement("div");
+        d.className="chapter"+(done?" done":"");d.id="ch-"+pi+"-"+ci;
+        d.innerHTML="<div class=\"ch-icon\"><i class=\"ti "+(done?"ti-check":"ti-book")+"\" style=\"color:"+(done?"var(--green)":"var(--muted)")+"\"></i></div>"
+          +"<div class=\"ch-text\"><div class=\"ch-title\">"+(ci+1)+". "+ch.t+"</div><div class=\"ch-desc\">"+ch.d+"</div></div>"
+          +"<button class=\"ch-btn\" onclick=\"event.stopPropagation();openModal("+pi+","+ci+")\">"+(done?"✓ Revoir":"Commencer")+"</button>";
+        d.onclick=function(){openModal(pi,ci);};
+        chsEl.appendChild(d);
+      });
+      chsEl.dataset.built="1";
+    }
+  }
+}
+
+function openModal(pi,ci){
+  curPhase=pi;curCh=ci;
+  var p=DATA[pi],ch=p.chapters[ci];
+  var done=store["ck_"+pi+"_"+ci]||false;
+  var qd=store["quiz_"+pi+"_"+ci];
+  var starV=store["star_"+pi+"_"+ci]||0;
+  var noteV=store["note_"+pi+"_"+ci]||"";
+  var html="<div class=\"modal-title\">"+ch.t+"</div>"
+    +"<div class=\"modal-sub\">Phase "+p.n+" · Chapitre "+(ci+1)+"/"+p.chapters.length+" · "+ch.d+"</div>"
+    +"<div class=\"modal-section\"><div class=\"modal-section-title\"><i class=\"ti ti-info-circle\"></i>Ce que tu vas apprendre</div>"
+    +"<div style=\"font-size:13px;color:var(--muted);line-height:1.7;padding:10px 12px;background:var(--card2);border-radius:8px;margin-bottom:8px\">"+ch.content+"</div>"
+    +"<ul class=\"content-list\">"+ch.learn.map(function(l){return"<li>"+l+"</li>";}).join("")+"</ul></div>"
+    +"<div class=\"modal-section\"><div class=\"modal-section-title\"><i class=\"ti ti-help-circle\"></i>Quiz de validation</div>"
+    +"<div class=\"quiz-block\"><div class=\"quiz-q\">"+ch.quiz.q+"</div>"
+    +"<div class=\"quiz-opts\">"+ch.quiz.opts.map(function(o,oi){
+      var cls="quiz-opt";
+      if(qd!=null){cls+=" ";if(oi==ch.quiz.correct)cls+="correct";else if(oi==qd&&qd!=ch.quiz.correct)cls+="wrong";}
+      return"<button class=\""+cls+"\" id=\"qopt-"+pi+"-"+ci+"-"+oi+"\" onclick=\"answerQuiz("+pi+","+ci+","+oi+")\" "+(qd!=null?"disabled":"")+">"+o+"</button>";
+    }).join("")+"</div>"
+    +"<div class=\"quiz-fb"+(qd!=null?" show "+(qd==ch.quiz.correct?"ok":"nok"):"")+" \" id=\"qfb-"+pi+"-"+ci+"\">"+(qd!=null?(qd==ch.quiz.correct?"✓ Correct ! ":"✗ Pas tout à fait. ")+ch.quiz.exp:"")+"</div></div></div>"
+    +"<div class=\"modal-section\"><div class=\"modal-section-title\"><i class=\"ti ti-tools\"></i>Exercice pratique</div>"
+    +"<div class=\"pratique-box\">"+ch.prompt+"</div></div>"
+    +"<div class=\"modal-section\"><div class=\"modal-section-title\"><i class=\"ti ti-star\"></i>Note ton travail</div>"
+    +"<div class=\"stars-row\" id=\"stars-"+pi+"-"+ci+"\">"+[1,2,3,4,5].map(function(s){return"<span class=\"star"+(s<=starV?" lit":"")+" \" onclick=\"rateStar("+pi+","+ci+","+s+")\" title=\""+s+" étoile"+(s>1?"s":"")+"\" aria-label=\""+s+" étoile\">★</span>";}).join("")+"</div>"
+    +"<textarea class=\"notes-area\" placeholder=\"Tes notes, résultats obtenus, difficultés...\" onchange=\"saveNote("+pi+","+ci+",this.value)\" id=\"note-"+pi+"-"+ci+"\">"+noteV+"</textarea></div>"
+    +"<button class=\"btn-gold\" id=\"doneBtn-"+pi+"-"+ci+"\" onclick=\"markDone("+pi+","+ci+")\">"+(done?"✓ Chapitre complété — Marquer comme à revoir":"✓ Marquer comme terminé")+"</button>"
+    +"<button class=\"btn-close\" onclick=\"closeModal()\">Fermer</button>";
+  document.getElementById("modalContent").innerHTML=html;
+  document.getElementById("modalOverlay").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+
+function closeModal(ev){
+  if(!ev||ev.target==document.getElementById("modalOverlay")){
+    document.getElementById("modalOverlay").classList.remove("open");
+    document.body.style.overflow="";
+  }
+}
+function answerQuiz(pi,ci,chosen){
+  var ch=DATA[pi].chapters[ci];
+  if(store["quiz_"+pi+"_"+ci]!=null)return;
+  store["quiz_"+pi+"_"+ci]=chosen;sv();
+  var ok=chosen==ch.quiz.correct;
+  var fb=document.getElementById("qfb-"+pi+"-"+ci);
+  if(fb){fb.className="quiz-fb show "+(ok?"ok":"nok");fb.textContent=(ok?"✓ Correct ! ":"✗ Pas tout à fait. ")+ch.quiz.exp;}
+  ch.quiz.opts.forEach(function(_,oi){
+    var el=document.getElementById("qopt-"+pi+"-"+ci+"-"+oi);
+    if(el){el.disabled=true;if(oi==ch.quiz.correct)el.classList.add("correct");else if(oi==chosen&&!ok)el.classList.add("wrong");}
+  });
+  updateAll();
+}
+function rateStar(pi,ci,s){
+  store["star_"+pi+"_"+ci]=s;sv();
+  var row=document.getElementById("stars-"+pi+"-"+ci);
+  if(row)row.querySelectorAll(".star").forEach(function(st,i){st.classList.toggle("lit",i<s);});
+  updateAll();
+}
+function saveNote(pi,ci,v){store["note_"+pi+"_"+ci]=v;sv();}
+function markDone(pi,ci){
+  store["ck_"+pi+"_"+ci]=!store["ck_"+pi+"_"+ci];sv();
+  var ch=document.getElementById("ch-"+pi+"-"+ci);
+  var btn=document.getElementById("doneBtn-"+pi+"-"+ci);
+  if(ch){
+    ch.classList.toggle("done",store["ck_"+pi+"_"+ci]);
+    var ico=ch.querySelector(".ch-icon i");
+    var chBtn=ch.querySelector(".ch-btn");
+    if(ico){ico.className=store["ck_"+pi+"_"+ci]?"ti ti-check":"ti ti-book";ico.style.color=store["ck_"+pi+"_"+ci]?"var(--green)":"var(--muted)";}
+    if(chBtn)chBtn.textContent=store["ck_"+pi+"_"+ci]?"✓ Revoir":"Commencer";
+  }
+  if(btn)btn.textContent=store["ck_"+pi+"_"+ci]?"✓ Chapitre complété — Marquer comme à revoir":"✓ Marquer comme terminé";
+  updateAll();
+}
+
+function buildChecklist(){
+  var c=document.getElementById("clContainer");
+  DATA.forEach(function(p,pi){
+    var cd=0;p.chapters.forEach(function(_,ci){if(store["ck_"+pi+"_"+ci])cd++;});
+    var el=document.createElement("div");el.className="cl-phase";
+    el.innerHTML="<div class=\"cl-hd\" onclick=\"this.parentElement.classList.toggle('open')\">"
+      +"<div class=\"cl-hd-left\"><i class=\"ti ti-circle-check\"></i>Phase "+p.n+" — "+p.title+"</div>"
+      +"<span class=\"cl-cnt"+(cd==p.chapters.length?" done":"")+" \" id=\"cl-cnt-"+pi+"\">"+cd+"/"+p.chapters.length+"</span></div>"
+      +"<div class=\"cl-items\">"+p.chapters.map(function(ch,ci){
+        var ck=store["ck_"+pi+"_"+ci]||false;
+        return"<div class=\"cl-item"+(ck?" ck":"")+" \" id=\"cli-"+pi+"-"+ci+"\" onclick=\"clToggle("+pi+","+ci+")\">"
+          +"<div class=\"cl-check\">"+(ck?"<i class=\"ti ti-check\"></i>":"")+"</div>"
+          +"<span>"+(ci+1)+". "+ch.t+" — "+ch.d+"</span></div>";
+      }).join("")+"</div>";
+    c.appendChild(el);
+  });
+}
+
+function clToggle(pi,ci){
+  store["ck_"+pi+"_"+ci]=!store["ck_"+pi+"_"+ci];sv();
+  var el=document.getElementById("cli-"+pi+"-"+ci);
+  if(el){el.classList.toggle("ck",store["ck_"+pi+"_"+ci]);var cb=el.querySelector(".cl-check");if(cb)cb.innerHTML=store["ck_"+pi+"_"+ci]?"<i class=\"ti ti-check\"></i>":"";}
+  var cd=0;DATA[pi].chapters.forEach(function(_,c){if(store["ck_"+pi+"_"+c])cd++;});
+  var cnt=document.getElementById("cl-cnt-"+pi);
+  if(cnt){cnt.textContent=cd+"/"+DATA[pi].chapters.length;cnt.className="cl-cnt"+(cd==DATA[pi].chapters.length?" done":"");}
+  var ch=document.getElementById("ch-"+pi+"-"+ci);
+  if(ch){
+    ch.classList.toggle("done",store["ck_"+pi+"_"+ci]);
+    var ico=ch.querySelector(".ch-icon i");if(ico){ico.className=store["ck_"+pi+"_"+ci]?"ti ti-check":"ti ti-book";ico.style.color=store["ck_"+pi+"_"+ci]?"var(--green)":"var(--muted)";}
+    var chBtn=ch.querySelector(".ch-btn");if(chBtn)chBtn.textContent=store["ck_"+pi+"_"+ci]?"✓ Revoir":"Commencer";
+  }
+  updateAll();
+}
+
+function buildBilan(){
+  var c=document.getElementById("bilanPhases");
+  DATA.forEach(function(p,pi){
+    var cd=0;p.chapters.forEach(function(_,ci){if(store["ck_"+pi+"_"+ci])cd++;});
+    var pct=Math.round(cd/p.chapters.length*100);
+    var el=document.createElement("div");el.className="bp-row";
+    el.innerHTML="<div class=\"bp-num\">P"+p.n+"</div>"
+      +"<div class=\"bp-name\">"+p.title+"</div>"
+      +"<div class=\"bp-bar-wrap\"><div class=\"bp-bar\" id=\"bp-bar-"+pi+"\" style=\"width:"+pct+"%\"></div></div>"
+      +"<div class=\"bp-pct\" id=\"bp-pct-"+pi+"\">"+pct+"%</div>";
+    c.appendChild(el);
+  });
+}
+
+function switchTab(t){
+  document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("active");});
+  document.getElementById("scr-"+t).classList.add("active");
+  document.querySelectorAll(".bnv").forEach(function(b){b.classList.remove("active");});
+  event.currentTarget.classList.add("active");
+  updateAll();
+  if(t=="bilan")updateBilan(
+    DATA.reduce(function(s,_,pi){return s+DATA[pi].chapters.filter(function(__,ci){return store["ck_"+pi+"_"+ci];}).length;},0),
+    getPct()
+  );
+}
+
+buildProgramme();buildChecklist();buildBilan();updateAll();
+</script>
+</body>
+</html>
